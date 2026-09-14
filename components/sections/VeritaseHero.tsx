@@ -23,7 +23,7 @@ const slides: Slide[] = [
       'Connecting global markets with certified industrial raw materials and reliable supply.',
     buttonText: 'EXPLORE',
     buttonLink: '/products',
-    localImage: '/images/hero/hero-1.png',
+    localImage: '/images/hero/hero-1.webp',
     fallbackImage: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=2000&q=80',
   },
   {
@@ -34,7 +34,7 @@ const slides: Slide[] = [
       'High-purity agricultural, feed, technical, and refractory grades from certified producers.',
     buttonText: 'EXPLORE PRODUCTS',
     buttonLink: '/products#mgo-focus',
-    localImage: '/images/hero/hero-2.png',
+    localImage: '/images/hero/hero-2.webp',
     fallbackImage: 'https://images.unsplash.com/photo-1616886307848-7f6635699c43?auto=format&fit=crop&w=2000&q=80',
   },
   {
@@ -45,7 +45,7 @@ const slides: Slide[] = [
       'XLPE, semiconductive compounds, ABS, and LDPE engineered for industrial applications.',
     buttonText: 'OUR BUSINESS',
     buttonLink: '/products#polymers',
-    localImage: '/images/hero/hero-3.png',
+    localImage: '/images/hero/hero-3.webp',
     fallbackImage: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=2000&q=80',
   },
   {
@@ -56,7 +56,7 @@ const slides: Slide[] = [
       'Decades of industrial foundation delivering operational reliability and global trade solutions.',
     buttonText: 'WHO WE ARE',
     buttonLink: '/who-we-are',
-    localImage: '/images/hero/hero-4.png',
+    localImage: '/images/hero/hero-4.webp',
     fallbackImage: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=2000&q=80',
   },
 ];
@@ -85,12 +85,7 @@ export const VeritaseHero: React.FC = () => {
       {slides.map((s, idx) => {
         let imageSrc = s.localImage;
         if (failedImages[s.localImage]) {
-          // If hero-3.png fails, try heor-3.png (common typo) before falling back
-          if (s.localImage.includes('hero-3.png') && !failedImages['/images/hero/heor-3.png']) {
-            imageSrc = '/images/hero/heor-3.png';
-          } else {
-            imageSrc = s.fallbackImage;
-          }
+          imageSrc = s.fallbackImage;
         }
 
         const isActive = idx === currentSlide;
