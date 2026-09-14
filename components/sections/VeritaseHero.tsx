@@ -18,45 +18,45 @@ const slides: Slide[] = [
   {
     number: '01',
     kicker: 'GLOBAL ALLIANCES',
-    headlineTitle: 'Global Sourcing & Industrial Expertise',
+    headlineTitle: 'Global Sourcing & Trade',
     subtitle:
-      'Long-term relationships founded on transparency, reliability, and mutual success with partners across the globe.',
+      'Connecting global markets with certified industrial raw materials and reliable supply.',
     buttonText: 'EXPLORE',
     buttonLink: '/products',
-    localImage: '/images/hero/hero-1.jpeg',
+    localImage: '/images/hero/hero-1.png',
     fallbackImage: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=2000&q=80',
   },
   {
     number: '02',
     kicker: 'CORE PRODUCTS',
-    headlineTitle: 'Magnesium Oxide & Specialty Chemicals',
+    headlineTitle: 'Magnesium Oxide & Chemicals',
     subtitle:
-      'Agricultural, feed, technical, and refractory grades sourced directly from verified international producers.',
+      'High-purity agricultural, feed, technical, and refractory grades from certified producers.',
     buttonText: 'EXPLORE PRODUCTS',
     buttonLink: '/products#mgo-focus',
-    localImage: '/images/hero/hero-2.jpeg',
+    localImage: '/images/hero/hero-2.png',
     fallbackImage: 'https://images.unsplash.com/photo-1616886307848-7f6635699c43?auto=format&fit=crop&w=2000&q=80',
   },
   {
     number: '03',
     kicker: 'POLYMER SOLUTIONS',
-    headlineTitle: 'High-Performance Polymers & Resins',
+    headlineTitle: 'High-Performance Polymers',
     subtitle:
-      'XLPE compounds, semiconductive compounds, ABS, and LDPE engineered for electrical cable & industrial applications.',
+      'XLPE, semiconductive compounds, ABS, and LDPE engineered for industrial applications.',
     buttonText: 'OUR BUSINESS',
     buttonLink: '/products#polymers',
-    localImage: '/images/hero/hero-1.jpeg',
+    localImage: '/images/hero/hero-3.png',
     fallbackImage: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=2000&q=80',
   },
   {
     number: '04',
     kicker: 'INDUSTRY PIONEERS',
-    headlineTitle: 'Excellence Through Industrial Expertise',
+    headlineTitle: 'Industrial Trade Excellence',
     subtitle:
-      'A diverse team of industry leaders united by a shared commitment to operational excellence and sustainable growth.',
+      'Decades of industrial foundation delivering operational reliability and global trade solutions.',
     buttonText: 'WHO WE ARE',
     buttonLink: '/who-we-are',
-    localImage: '/images/hero/hero-2.jpeg',
+    localImage: '/images/hero/hero-4.png',
     fallbackImage: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=2000&q=80',
   },
 ];
@@ -68,43 +68,52 @@ export const VeritaseHero: React.FC = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 7000);
+    }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [currentSlide]);
 
   const slide = slides[currentSlide];
 
-  // Helper to handle image load errors and try alternative local extensions (.jpeg, .jpg, .png)
+  // Helper to handle image load errors and try alternative paths/extensions
   const handleImageError = (basePath: string) => {
-    if (basePath.endsWith('.jpeg')) {
-      const altPath = basePath.replace('.jpeg', '.jpg');
-      setFailedImages((prev) => ({ ...prev, [basePath]: true, [altPath]: false }));
-    } else {
-      setFailedImages((prev) => ({ ...prev, [basePath]: true }));
-    }
+    setFailedImages((prev) => ({ ...prev, [basePath]: true }));
   };
 
   return (
     <section className="relative h-screen min-h-screen w-full overflow-hidden bg-navy-950 text-white flex items-center">
-      {/* Background Image Carousel with Vibrant Natural Overlay (Matching Reference Image 1) */}
+      {/* Background Image Carousel with Vibrant Natural Overlay */}
       {slides.map((s, idx) => {
-        const imageSrc = failedImages[s.localImage] ? s.fallbackImage : s.localImage;
+        let imageSrc = s.localImage;
+        if (failedImages[s.localImage]) {
+          // If hero-3.png fails, try heor-3.png (common typo) before falling back
+          if (s.localImage.includes('hero-3.png') && !failedImages['/images/hero/heor-3.png']) {
+            imageSrc = '/images/hero/heor-3.png';
+          } else {
+            imageSrc = s.fallbackImage;
+          }
+        }
+
+        const isActive = idx === currentSlide;
+        const zoomAnimationClass = idx % 2 === 0 ? 'animate-hero-zoom-in' : 'animate-hero-zoom-out';
 
         return (
           <div
             key={s.number}
             className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-              idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+              isActive ? 'opacity-100 z-10' : 'opacity-0 z-0'
             }`}
           >
-            {/* Background Image element with slow zoom animation */}
+            {/* Background Image element with alternating zoom-in / zoom-out animation retriggered on image change */}
             <img
+              key={isActive ? `active-hero-zoom-${currentSlide}` : `inactive-hero-${idx}`}
               src={imageSrc}
               alt={s.headlineTitle}
               onError={() => handleImageError(s.localImage)}
-              className="absolute inset-0 h-full w-full object-cover object-center animate-hero-zoom scale-105"
+              className={`absolute inset-0 h-full w-full object-cover object-center ${
+                isActive ? zoomAnimationClass : (idx % 2 === 0 ? 'scale-100' : 'scale-110')
+              }`}
             />
-            {/* Reduced Vignette Overlay (Vibrant images matching reference image 1) */}
+            {/* Vignette Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-navy-950/85 via-navy-950/30 to-navy-950/50" />
             <div className="absolute inset-0 bg-gradient-to-r from-navy-950/70 via-transparent to-navy-950/20" />
           </div>
@@ -120,8 +129,8 @@ export const VeritaseHero: React.FC = () => {
             <span>{slide.number} / {slide.kicker}</span>
           </div>
 
-          {/* Single-Line Display Headline (Clean Sans-Serif Typography matching Image 1) */}
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-white leading-tight font-sans whitespace-nowrap max-w-full overflow-hidden text-ellipsis animate-text-slide-up animate-delay-1">
+          {/* Clean Display Headline (Short & fully readable, no ellipsis) */}
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-white leading-tight font-sans animate-text-slide-up animate-delay-1">
             {slide.headlineTitle}
           </h1>
 
@@ -144,19 +153,35 @@ export const VeritaseHero: React.FC = () => {
         </div>
       </div>
 
-      {/* Bottom Right Slide Progress Bar (── ── ── ──) */}
-      <div className="absolute bottom-10 right-8 sm:right-16 z-20 flex items-center gap-3">
-        {slides.map((_, idx) => (
-          <button
-            key={idx}
-            onClick={() => setCurrentSlide(idx)}
-            className={`h-[2px] transition-all duration-500 cursor-pointer ${
-              idx === currentSlide ? 'w-12 bg-white' : 'w-6 bg-white/30 hover:bg-white/60'
-            }`}
-            aria-label={`Go to slide ${idx + 1}`}
-          />
-        ))}
+      {/* Bottom Right Clean Slide Progress Lines (No capsule container, no numbers) */}
+      <div className="absolute bottom-10 right-8 sm:right-16 z-20 flex items-center gap-3 sm:gap-4">
+        {slides.map((s, idx) => {
+          const isActive = idx === currentSlide;
+          const isPast = idx < currentSlide;
+
+          return (
+            <button
+              key={idx}
+              onClick={() => setCurrentSlide(idx)}
+              className="relative h-[3px] w-10 sm:w-16 bg-white/30 rounded-full overflow-hidden cursor-pointer hover:bg-white/40 transition-colors"
+              aria-label={`Go to slide ${idx + 1}`}
+            >
+              <div
+                key={isActive ? `active-${currentSlide}` : `inactive-${idx}`}
+                className={`absolute inset-y-0 left-0 rounded-full ${
+                  isActive
+                    ? 'w-full bg-white animate-hero-progress'
+                    : isPast
+                    ? 'w-full bg-white'
+                    : 'w-0 bg-transparent'
+                }`}
+              />
+            </button>
+          );
+        })}
       </div>
     </section>
   );
 };
+
+

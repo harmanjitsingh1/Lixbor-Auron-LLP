@@ -160,18 +160,32 @@
   padding-left: 0.5rem;
 }
 
-/* Smooth Slow Hero Zoom-In Animation */
+/* Alternating Hero Zoom Animations (5s duration synchronized with slide change) */
 @keyframes heroZoomIn {
   0% {
     transform: scale(1);
   }
   100% {
-    transform: scale(1.12);
+    transform: scale(1.09);
   }
 }
 
-.animate-hero-zoom {
-  animation: heroZoomIn 22s cubic-bezier(0.25, 1, 0.5, 1) infinite alternate;
+@keyframes heroZoomOut {
+  0% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-hero-zoom-in {
+  animation: heroZoomIn 5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  will-change: transform;
+}
+
+.animate-hero-zoom-out {
+  animation: heroZoomOut 5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
   will-change: transform;
 }
 
@@ -208,3 +222,19 @@
 .hero-text-shadow {
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
+
+/* Hero Progress Fill Animation (5s linear) */
+@keyframes heroProgressFill {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.animate-hero-progress {
+  animation: heroProgressFill 5s linear forwards;
+  will-change: width;
+}
+
