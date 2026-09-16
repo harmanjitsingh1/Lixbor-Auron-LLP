@@ -1,9 +1,21 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
 import { Logo } from '../ui/Logo';
+import { Icon } from '../ui/Icons';
 import { companyData, mainNavLinks, footerLegalLinks } from '../../lib/content/company';
 
 export const Footer: React.FC = () => {
+  const scrollToTop = () => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    }
+  };
+
   return (
     <footer className="bg-white text-slate-900 border-t border-slate-200">
       {/* Veritase Dark Full-Width Contact Banner above Footer */}
@@ -119,8 +131,19 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Footer Bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 font-light">
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 font-light relative">
           <p>© {new Date().getFullYear()} Lixbor Auron LLP. All rights reserved.</p>
+
+          {/* Scroll to Top Button */}
+          <button
+            onClick={scrollToTop}
+            type="button"
+            aria-label="Scroll to top"
+            className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center text-slate-500 hover:text-emerald-600 hover:border-emerald-500 transition-all duration-200 hover:shadow-md active:scale-95 bg-white cursor-pointer"
+          >
+            <Icon name="ArrowUp" size={16} />
+          </button>
+
           <div className="flex items-center gap-3">
             <Logo variant="dark" />
           </div>

@@ -27,10 +27,6 @@ export const Header: React.FC = () => {
           <a href="#" className="hover:text-white transition-colors">
             LinkedIn
           </a>
-          <div className="flex items-center gap-1 cursor-pointer hover:text-white transition-colors">
-            <span>EN</span>
-            <span className="text-[9px]">▼</span>
-          </div>
         </div>
       </div>
 

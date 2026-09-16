@@ -31,7 +31,7 @@ const slides: Slide[] = [
     kicker: 'CORE PRODUCTS',
     headlineTitle: 'Magnesium Oxide & Chemicals',
     subtitle:
-      'High-purity agricultural, feed, technical, and refractory grades from certified producers.',
+      'High-purity agricultural, feed, and technical grades from certified producers.',
     buttonText: 'EXPLORE PRODUCTS',
     buttonLink: '/products#mgo-focus',
     localImage: '/images/hero/hero-2.webp',
@@ -39,24 +39,13 @@ const slides: Slide[] = [
   },
   {
     number: '03',
-    kicker: 'POLYMER SOLUTIONS',
-    headlineTitle: 'High-Performance Polymers',
-    subtitle:
-      'XLPE, semiconductive compounds, ABS, and LDPE engineered for industrial applications.',
-    buttonText: 'OUR BUSINESS',
-    buttonLink: '/products#polymers',
-    localImage: '/images/hero/hero-3.webp',
-    fallbackImage: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=2000&q=80',
-  },
-  {
-    number: '04',
     kicker: 'INDUSTRY PIONEERS',
     headlineTitle: 'Industrial Trade Excellence',
     subtitle:
       'Decades of industrial foundation delivering operational reliability and global trade solutions.',
     buttonText: 'WHO WE ARE',
     buttonLink: '/who-we-are',
-    localImage: '/images/hero/hero-4.webp',
+    localImage: '/images/hero/hero-3.webp',
     fallbackImage: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=2000&q=80',
   },
 ];

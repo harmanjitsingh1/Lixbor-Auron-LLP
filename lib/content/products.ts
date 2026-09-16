@@ -19,12 +19,6 @@ export const mgoFlagshipGrades: MgOGrade[] = [
     description: 'High-purity reactive magnesium oxide for chemical processing, hydrometallurgy, water treatment, and construction boards.',
     applications: ['Magnesium Board Manufacturing', 'Wastewater Neutralization', 'Chemical Synthesis', 'Rubber & Plastics Additives'],
   },
-  {
-    name: 'Refractory & High-Temp Grade',
-    code: 'MgO-REFR',
-    description: 'Dead-burned and fused magnesium oxide engineered for extreme heat resistance in steelmaking, kilns, and furnace linings.',
-    applications: ['Steel Furnace Linings', 'Cement Kiln Refractories', 'High-Temperature Insulation', 'Foundry Applications'],
-  },
 ];
 
 export const productsData: Product[] = [
@@ -33,21 +27,20 @@ export const productsData: Product[] = [
     name: 'Magnesium Oxide (MgO)',
     category: 'Chemicals & Fertilizers',
     isFlagship: true,
-    shortDescription: 'Core focus product available in specialized grades for agriculture, animal nutrition, technical, and refractory applications.',
+    shortDescription: 'Core focus product available in specialized grades for agriculture, animal nutrition, and technical applications.',
     fullDescription:
-      'Magnesium Oxide (MgO) represents Lixbor Auron LLP’s primary core product focus. We source and distribute high-purity MgO tailored to stringent global specifications across agricultural, animal nutrition, industrial chemical, and high-temperature refractory sectors.',
+      'Magnesium Oxide (MgO) represents Lixbor Auron LLP’s primary core product focus. We source and distribute high-purity MgO tailored to stringent global specifications across agricultural, animal nutrition, and industrial chemical sectors.',
     keyApplications: [
       'Agriculture & Soil Health',
       'Animal Nutrition & Feed Premixes',
-      'Refractories & High Temperature Linings',
       'Construction Boards & Environmental Treatment',
     ],
     grades: mgoFlagshipGrades,
     specifications: [
       'Available in MgO purities ranging from 85% to 98%+',
-      'Custom mesh sizes (Powder, Granular, Dead-Burned)',
+      'Custom mesh sizes (Powder, Granular)',
       'Low heavy-metal profiles certified for feed applications',
-      'Controlled reactivity (Light Burned / Caustic Calcined & Dead Burned)',
+      'Controlled reactivity (Light Burned / Caustic Calcined)',
     ],
     image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1000&q=80',
   },
@@ -55,19 +48,18 @@ export const productsData: Product[] = [
     id: 'urea',
     name: 'Urea',
     category: 'Chemicals & Fertilizers',
-    shortDescription: 'Versatile nitrogen product supplied in agricultural, prilled, industrial, and automotive (DEF/AdBlue) grades.',
+    shortDescription: 'Versatile nitrogen product supplied in technical, prilled, industrial, and automotive (DEF/AdBlue) grades.',
     fullDescription:
-      'High-nitrogen chemical compound essential for agricultural crop fertilization, resin production, and automotive exhaust fluid (DEF/AdBlue) manufacturing. Sourced directly from tier-1 chemical producers.',
+      'High-nitrogen chemical compound essential for resin production, industrial chemical synthesis, and automotive exhaust fluid (DEF/AdBlue) manufacturing. Sourced directly from tier-1 chemical producers.',
     keyApplications: [
-      'Agricultural Nitrogen Fertilizer',
       'Automotive DEF / AdBlue Production',
       'Urea-Formaldehyde Resins & Adhesives',
       'Industrial Chemical Intermediate',
     ],
     specifications: [
       'Nitrogen Content: 46% min',
-      'Grades: Agricultural Prilled / Granular, Technical / Industrial Grade',
-      'Low biuret options for sensitive crop & industrial applications',
+      'Grades: Technical / Industrial Grade, Automotive / DEF Grade',
+      'Low biuret options for technical & industrial applications',
     ],
     image: 'https://images.unsplash.com/photo-1585314062340-f1a5a7c9328d?auto=format&fit=crop&w=1000&q=80',
   },

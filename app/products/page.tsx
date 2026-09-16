@@ -36,7 +36,7 @@ export default function ProductsPage() {
               Magnesium Oxide (MgO) Program
             </h2>
             <p className="text-base text-slate-600 font-light max-w-2xl">
-              Lixbor Auron LLP’s primary core product focus. We source and supply high-purity MgO across four distinct grades.
+              Lixbor Auron LLP’s primary core product focus. We source and supply high-purity MgO across three distinct grades.
             </p>
           </div>
 

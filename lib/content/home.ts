@@ -51,8 +51,8 @@ export const homeDealInData = {
     {
       id: 'mgo-specialty',
       title: 'Magnesium Oxide (MgO) Focus',
-      description: 'Flagship sourcing program covering Agricultural, Feed Grade, Technical, and Refractory applications.',
-      highlightProducts: ['Agricultural Grade', 'Animal Nutrition Grade', 'Technical Grade', 'Refractory Grade'],
+      description: 'Flagship sourcing program covering Agricultural, Feed Grade, and Technical applications.',
+      highlightProducts: ['Agricultural Grade', 'Animal Nutrition Grade', 'Technical Grade'],
       href: '/products#mgo-focus',
       image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=800&q=80',
     },
