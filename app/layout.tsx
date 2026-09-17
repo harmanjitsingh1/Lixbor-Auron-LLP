@@ -3,6 +3,7 @@ import { Inter, Playfair_Display } from 'next/font/google';
 import './globals.css';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
+import { HashScrollHandler } from '../components/ui/HashScrollHandler';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -41,6 +42,17 @@ export const metadata: Metadata = {
     locale: 'en_US',
     siteName: 'Lixbor Auron LLP',
   },
+  icons: {
+    icon: '/logo/logo-svg.svg',
+    shortcut: '/logo/logo-svg.svg',
+    apple: '/logo/logo-png.png',
+  },
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({
@@ -49,8 +61,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
+    <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} ${playfair.variable}`}>
       <body className="flex min-h-screen flex-col bg-white text-slate-900 font-sans antialiased">
+        <HashScrollHandler />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />

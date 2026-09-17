@@ -145,6 +145,7 @@ export const VeritaseHero: React.FC = () => {
 
           return (
             <button
+              type="button"
               key={idx}
               onClick={() => setCurrentSlide(idx)}
               className="relative h-[3px] w-10 sm:w-16 bg-white/30 rounded-full overflow-hidden cursor-pointer hover:bg-white/40 transition-colors"

@@ -13,13 +13,15 @@ export const enquiryCategories = [
   { value: 'general', label: 'General Corporate / Trade Inquiry' },
 ];
 
+import { companyData } from './company';
+
 export const companyDetailFields = [
-  { label: 'Registered Office', key: 'registeredOffice', value: '[Registered Office Address]' },
-  { label: 'LLPIN', key: 'llpin', value: '[LLPIN]' },
-  { label: 'IEC Code', key: 'iec', value: '[IEC Code]' },
-  { label: 'GSTIN', key: 'gstin', value: '[GSTIN]' },
-  { label: 'Email', key: 'email', value: '[Email Address]' },
-  { label: 'Phone', key: 'phone', value: '[Phone Number]' },
-  { label: 'Website', key: 'website', value: '[Website URL]' },
-  { label: 'Country', key: 'country', value: 'India' },
+  { label: 'Registered Office', key: 'registeredOffice', value: companyData.placeholders.registeredOffice },
+  { label: 'LLPIN', key: 'llpin', value: companyData.placeholders.llpin },
+  { label: 'PAN', key: 'pan', value: companyData.placeholders.pan },
+  { label: 'TAN', key: 'tan', value: companyData.placeholders.tan },
+  { label: 'Email', key: 'email', value: companyData.placeholders.email },
+  { label: 'Phone', key: 'phone', value: companyData.placeholders.phone },
+  { label: 'Website', key: 'website', value: companyData.placeholders.website },
+  { label: 'Country', key: 'country', value: companyData.country },
 ];

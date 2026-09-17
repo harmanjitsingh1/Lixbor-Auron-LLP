@@ -109,22 +109,26 @@ export const Footer: React.FC = () => {
             <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
               BUSINESS ENQUIRIES
             </h4>
-            <div className="space-y-2 text-xs font-mono text-slate-600">
+            <div className="space-y-2.5 text-xs text-slate-600">
               <div>
                 <span className="text-[10px] text-slate-400 uppercase block font-sans">General Contact:</span>
-                <span className="text-slate-800">{companyData.placeholders.email}</span>
+                <a href={`mailto:${companyData.placeholders.email}`} className="text-slate-800 font-mono font-medium hover:text-emerald-600 transition-colors">
+                  {companyData.placeholders.email}
+                </a>
               </div>
               <div>
                 <span className="text-[10px] text-slate-400 uppercase block font-sans">Phone / WhatsApp:</span>
-                <span className="text-slate-800">{companyData.placeholders.phone}</span>
+                <a href={`tel:${companyData.placeholders.phone}`} className="text-slate-800 font-mono font-medium hover:text-emerald-600 transition-colors">
+                  {companyData.placeholders.phone}
+                </a>
               </div>
               <div>
                 <span className="text-[10px] text-slate-400 uppercase block font-sans">Corporate Office:</span>
-                <span className="text-slate-800">{companyData.placeholders.registeredOffice}</span>
+                <span className="text-slate-800 font-sans leading-tight block">{companyData.placeholders.registeredOffice}</span>
               </div>
               <div>
-                <span className="text-[10px] text-slate-400 uppercase block font-sans">LLPIN / IEC / GSTIN:</span>
-                <span className="text-slate-800">{companyData.placeholders.llpin} · {companyData.placeholders.iec}</span>
+                <span className="text-[10px] text-slate-400 uppercase block font-sans">LLPIN / PAN / TAN:</span>
+                <span className="text-slate-800 font-mono text-[11px] block">{companyData.placeholders.llpin} · PAN: {companyData.placeholders.pan} · TAN: {companyData.placeholders.tan}</span>
               </div>
             </div>
           </div>
@@ -132,7 +136,7 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Footer Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 font-light relative">
-          <p>© {new Date().getFullYear()} Lixbor Auron LLP. All rights reserved.</p>
+          <p suppressHydrationWarning>© {new Date().getFullYear()} Lixbor Auron LLP. All rights reserved.</p>
 
           {/* Scroll to Top Button */}
           <button

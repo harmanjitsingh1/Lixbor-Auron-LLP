@@ -13,25 +13,25 @@ const cards: CardItem[] = [
     kicker: 'CHEMICALS & FERTILIZERS',
     title: 'High-grade MgO, Urea, Sulphur, and Melamine for agricultural and industrial processing.',
     link: '/products#chemicals-fertilizers',
-    image: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=800&q=80',
+    image: '/images/cards/card-1.webp',
   },
   {
     kicker: 'POLYMERS & RESINS',
     title: 'XLPE compounds, semiconductive compounds, ABS, and LDPE engineered for power cable & packaging sectors.',
     link: '/products#polymers',
-    image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80',
+    image: '/images/cards/card-2.webp',
   },
   {
     kicker: 'OUR SOURCING MODEL',
     title: 'End-to-end physical trading & 5-step sourcing methodology: Understand → Source → Verify → Execute.',
     link: '/who-we-are',
-    image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80',
+    image: '/images/cards/card-3.webp',
   },
   {
     kicker: 'SPEAK TO OUR EXPERTS',
     title: 'Get tailored commercial quotes and technical specifications from our experienced export team.',
     link: '/contact',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80',
+    image: '/images/cards/card-4.webp',
   },
 ];
 

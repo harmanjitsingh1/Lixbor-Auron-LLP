@@ -71,11 +71,13 @@ export interface CompanyDetails {
   placeholders: {
     registeredOffice: string;
     llpin: string;
+    pan: string;
+    tan: string;
     email: string;
-    iec: string;
     phone: string;
-    gstin: string;
     website: string;
+    iec?: string;
+    gstin?: string;
   };
   journeyTagline: string;
   visionTagline: string;
