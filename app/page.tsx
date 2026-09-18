@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { VeritaseHero } from '../components/sections/VeritaseHero';
 import { VeritaseCards } from '../components/sections/VeritaseCards';
+import { FAQSection } from '../components/sections/FAQSection';
 
 export default function HomePage() {
   return (
@@ -91,6 +92,13 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* 5. Frequently Asked Questions Section */}
+      <FAQSection
+        badge="FAQS & INFORMATION"
+        title="Frequently Asked Questions"
+        subtitle="Key insights into our commodities, commercial process, quality standards, and sourcing foundation."
+      />
     </div>
   );
 }

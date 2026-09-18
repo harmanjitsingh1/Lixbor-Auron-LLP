@@ -1,5 +1,6 @@
 import React, { Suspense } from 'react';
 import { ContactForm } from '../../components/sections/ContactForm';
+import { FAQSection } from '../../components/sections/FAQSection';
 import { companyDetailFields } from '../../lib/content/contact';
 import { companyData } from '../../lib/content/company';
 
@@ -93,6 +94,14 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
+
+      {/* Frequently Asked Questions Section */}
+      <FAQSection
+        badge="FAQS & HELP"
+        title="Commercial Inquiry FAQs"
+        subtitle="Common questions answered to assist you before contacting our desk."
+        className="py-20 bg-white border-t border-slate-200"
+      />
     </div>
   );
 }

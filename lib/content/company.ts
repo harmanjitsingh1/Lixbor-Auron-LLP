@@ -25,6 +25,7 @@ export const mainNavLinks = [
   { name: 'Home', href: '/' },
   { name: 'Who We Are', href: '/who-we-are' },
   { name: 'Our Products', href: '/products' },
+  { name: 'FAQ', href: '/faq' },
 ];
 
 export const footerLegalLinks = [
