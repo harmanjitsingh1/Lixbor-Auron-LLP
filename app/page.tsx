@@ -96,7 +96,7 @@ export default function HomePage() {
       {/* 5. Frequently Asked Questions Section */}
       <FAQSection
         badge="FAQS & INFORMATION"
-        title="Frequently Asked Questions"
+        title="Any questions?"
         subtitle="Key insights into our commodities, commercial process, quality standards, and sourcing foundation."
       />
     </div>

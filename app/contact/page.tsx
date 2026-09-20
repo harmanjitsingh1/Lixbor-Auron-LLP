@@ -74,22 +74,6 @@ export default function ContactPage() {
                   ))}
                 </div>
               </div>
-
-              {/* Head Office Location Card */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-3 shadow-sm">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900">Head Office Location</h4>
-                <div className="relative h-48 rounded-xl overflow-hidden bg-slate-900 border border-slate-200">
-                  <img
-                    src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=800&q=80"
-                    alt="Head Office Location"
-                    className="h-full w-full object-cover opacity-50"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#070e17] via-[#070e17]/40 to-transparent flex flex-col justify-end p-4 space-y-1">
-                    <span className="text-xs font-semibold text-white">{companyData.placeholders.registeredOffice}</span>
-                    <span className="text-[11px] text-emerald-400 font-medium">Punjab, India</span>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
