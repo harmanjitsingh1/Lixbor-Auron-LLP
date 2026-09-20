@@ -1,14 +1,14 @@
 import React from 'react';
 import Link from 'next/link';
 
-interface CardItem {
+export interface CardItem {
   kicker: string;
   title: string;
   link: string;
   image: string;
 }
 
-const cards: CardItem[] = [
+const defaultCards: CardItem[] = [
   {
     kicker: 'CHEMICALS & FERTILIZERS',
     title: 'High-grade MgO, Urea, Sulphur, and Melamine for agricultural and industrial processing.',
@@ -35,7 +35,12 @@ const cards: CardItem[] = [
   },
 ];
 
-export const VeritaseCards: React.FC = () => {
+interface VeritaseCardsProps {
+  cards?: CardItem[];
+}
+
+export const VeritaseCards: React.FC<VeritaseCardsProps> = ({ cards: propCards }) => {
+  const cards = propCards && propCards.length > 0 ? propCards : defaultCards;
   return (
     <section className="py-24 bg-slate-50 border-t border-slate-200">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">

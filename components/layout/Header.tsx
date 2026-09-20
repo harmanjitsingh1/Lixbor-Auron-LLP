@@ -40,6 +40,10 @@ export const Header: React.FC = () => {
     };
   }, [isMobileMenuOpen]);
 
+  if (pathname?.startsWith('/studio')) {
+    return null;
+  }
+
   return (
     <>
       {/* Top subtle vignette gradient at the very top for contrast */}

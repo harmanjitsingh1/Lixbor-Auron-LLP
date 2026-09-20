@@ -1,10 +1,11 @@
 import React from 'react';
 import Link from 'next/link';
-import { productsData, mgoFlagshipGrades } from '../../lib/content/products';
+import { getProductsData } from '../../lib/sanity/data';
 
-export default function ProductsPage() {
-  const chemicalsAndFertilizers = productsData.filter((p) => p.category === 'Chemicals & Fertilizers');
-  const polymers = productsData.filter((p) => p.category === 'Polymers');
+export default async function ProductsPage() {
+  const { products, mgoGrades } = await getProductsData();
+  const chemicalsAndFertilizers = products.filter((p) => p.category === 'Chemicals & Fertilizers');
+  const polymers = products.filter((p) => p.category === 'Polymers');
 
   return (
     <div className="space-y-0">
@@ -41,7 +42,7 @@ export default function ProductsPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {mgoFlagshipGrades.map((grade) => (
+            {mgoGrades.map((grade) => (
               <div key={grade.code} className="bg-slate-50 border border-slate-200 rounded-2xl p-6 space-y-4 flex flex-col justify-between hover:border-emerald-500 transition-colors">
                 <div className="space-y-3">
                   <span className="text-xs font-mono font-bold text-emerald-600 uppercase tracking-widest block">{grade.code}</span>

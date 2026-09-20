@@ -2,11 +2,14 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Logo } from '../ui/Logo';
 import { Icon } from '../ui/Icons';
 import { companyData, mainNavLinks, footerLegalLinks } from '../../lib/content/company';
 
 export const Footer: React.FC = () => {
+  const pathname = usePathname();
+
   const scrollToTop = () => {
     if (typeof window !== 'undefined') {
       window.scrollTo({
@@ -15,6 +18,10 @@ export const Footer: React.FC = () => {
       });
     }
   };
+
+  if (pathname?.startsWith('/studio')) {
+    return null;
+  }
 
   return (
     <footer className="bg-white text-slate-900 border-t border-slate-200">
@@ -118,7 +125,7 @@ export const Footer: React.FC = () => {
               </div>
               <div>
                 <span className="text-[10px] text-slate-400 uppercase block font-sans">Phone / WhatsApp:</span>
-                <a href={`tel:${companyData.placeholders.phone}`} className="text-slate-800 font-mono font-medium hover:text-emerald-600 transition-colors">
+                <a href={`tel:${companyData.placeholders.phone.replace(/[^+\d]/g, '')}`} className="text-slate-800 font-mono font-medium hover:text-emerald-600 transition-colors">
                   {companyData.placeholders.phone}
                 </a>
               </div>

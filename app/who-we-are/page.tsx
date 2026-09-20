@@ -1,8 +1,10 @@
 import React from 'react';
 import { Timeline } from '../../components/sections/TimelineItem';
-import { timelineMilestones, coreValuesData, visionData, companyStoryData } from '../../lib/content/who-we-are';
+import { getWhoWeAreData } from '../../lib/sanity/data';
 
-export default function WhoWeArePage() {
+export default async function WhoWeArePage() {
+  const { hero, story, coreValues, vision, milestones } = await getWhoWeAreData();
+
   return (
     <div className="space-y-0">
       {/* 1. Page Hero Banner (Extends to top: 0 behind transparent header) */}
@@ -11,13 +13,13 @@ export default function WhoWeArePage() {
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6">
           <div className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.25em] text-slate-300">
             <span className="w-8 h-[1px] bg-emerald-500"></span>
-            <span>ABOUT LIXBOR AURON LLP</span>
+            <span>{hero.kicker}</span>
           </div>
           <h1 className="text-4xl sm:text-6xl font-semibold tracking-tight text-white leading-tight font-sans">
-            Global Sourcing & Industrial Expertise
+            {hero.title}
           </h1>
           <p className="text-base sm:text-lg text-slate-300 font-light max-w-2xl leading-relaxed">
-            A professionally managed trading company engaged in international sourcing, trading and distribution of chemicals, fertilizers and polymers.
+            {hero.description}
           </p>
         </div>
       </section>
@@ -28,20 +30,26 @@ export default function WhoWeArePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             <div className="lg:col-span-5 space-y-3">
               <span className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400 block">
-                OUR HERITAGE
+                {story.kicker}
               </span>
               <h2 className="text-3xl sm:text-5xl font-light text-slate-900 leading-tight font-sans">
-                1989 Foundations <br />
-                <span className="font-semibold">2026 Platform</span>
+                {story.title.includes('2026') ? (
+                  <>
+                    {story.title.replace('2026 Platform', '').trim()} <br />
+                    <span className="font-semibold">2026 Platform</span>
+                  </>
+                ) : (
+                  story.title
+                )}
               </h2>
             </div>
 
             <div className="lg:col-span-7 space-y-6 text-base text-slate-600 font-light leading-relaxed">
               <p className="text-slate-900 font-normal">
-                {companyStoryData.paragraph1}
+                {story.paragraph1}
               </p>
-              <p>{companyStoryData.paragraph2}</p>
-              <p>{companyStoryData.paragraph3}</p>
+              <p>{story.paragraph2}</p>
+              <p>{story.paragraph3}</p>
             </div>
           </div>
         </div>
@@ -60,8 +68,8 @@ export default function WhoWeArePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {coreValuesData.map((val) => (
-              <div key={val.id} className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm space-y-4 hover:border-emerald-500 transition-colors">
+            {coreValues.map((val) => (
+              <div key={val.id || val.title} className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm space-y-4 hover:border-emerald-500 transition-colors">
                 <span className="text-xs font-mono text-emerald-600 font-bold uppercase tracking-widest block">
                   {val.title}
                 </span>
@@ -79,18 +87,18 @@ export default function WhoWeArePage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="space-y-3 max-w-3xl">
             <span className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400 block">
-              VISION & STRATEGY
+              {vision.kicker}
             </span>
             <h2 className="text-3xl sm:text-5xl font-semibold text-white leading-tight font-sans">
-              Build → Expand → Globalize
+              {vision.title}
             </h2>
             <p className="text-base text-slate-300 font-light">
-              {visionData.description}
+              {vision.description}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-            {visionData.pillars.map((pillar, i) => (
+            {vision.pillars.map((pillar, i) => (
               <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md space-y-3">
                 <span className="text-xs font-mono text-emerald-400 font-bold">0{i + 1}</span>
                 <h3 className="text-base font-bold text-white">{pillar.title}</h3>
@@ -113,7 +121,7 @@ export default function WhoWeArePage() {
             </h2>
           </div>
 
-          <Timeline milestones={timelineMilestones} />
+          <Timeline milestones={milestones} />
         </div>
       </section>
     </div>

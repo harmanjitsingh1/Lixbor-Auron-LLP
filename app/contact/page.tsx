@@ -1,10 +1,29 @@
 import React, { Suspense } from 'react';
 import { ContactForm } from '../../components/sections/ContactForm';
 import { FAQSection } from '../../components/sections/FAQSection';
-import { companyDetailFields } from '../../lib/content/contact';
-import { companyData } from '../../lib/content/company';
+import { getContactPageData, getSiteSettings, getFaqData } from '../../lib/sanity/data';
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const [contactData, settings, faqs] = await Promise.all([
+    getContactPageData(),
+    getSiteSettings(),
+    getFaqData(),
+  ]);
+
+  const { companyData } = settings;
+  const { hero } = contactData;
+
+  const dynamicCompanyDetailFields = [
+    { label: 'Registered Office', key: 'registeredOffice', value: companyData.placeholders.registeredOffice },
+    { label: 'LLPIN', key: 'llpin', value: companyData.placeholders.llpin },
+    { label: 'PAN', key: 'pan', value: companyData.placeholders.pan },
+    { label: 'TAN', key: 'tan', value: companyData.placeholders.tan },
+    { label: 'Email', key: 'email', value: companyData.placeholders.email },
+    { label: 'Phone', key: 'phone', value: companyData.placeholders.phone },
+    { label: 'Website', key: 'website', value: companyData.placeholders.website },
+    { label: 'Country', key: 'country', value: companyData.country },
+  ];
+
   return (
     <div className="space-y-0">
       {/* Hero Banner (Extends to top: 0 behind transparent header) */}
@@ -13,13 +32,13 @@ export default function ContactPage() {
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6">
           <div className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.25em] text-slate-300">
             <span className="w-8 h-[1px] bg-emerald-500"></span>
-            <span>COMMERCIAL ENQUIRIES</span>
+            <span>{hero.kicker}</span>
           </div>
           <h1 className="text-4xl sm:text-6xl font-semibold tracking-tight text-white leading-tight font-sans">
-            Speak to Our Trading Desk
+            {hero.title}
           </h1>
           <p className="text-base sm:text-lg text-slate-300 font-light max-w-2xl leading-relaxed">
-            Whether you require technical specifications, commercial quotes, COA documentation, or long-term supply contract discussions.
+            {hero.description}
           </p>
         </div>
       </section>
@@ -49,7 +68,7 @@ export default function ContactPage() {
                 </div>
 
                 <div className="space-y-3 pt-2">
-                  {companyDetailFields.map((field) => (
+                  {dynamicCompanyDetailFields.map((field) => (
                     <div
                       key={field.key}
                       className="bg-white/5 border border-white/10 rounded-lg p-3 flex flex-col sm:flex-row sm:items-center justify-between text-xs gap-1 sm:gap-4"
@@ -60,7 +79,7 @@ export default function ContactPage() {
                           {field.value}
                         </a>
                       ) : field.key === 'phone' ? (
-                        <a href={`tel:${field.value}`} className="text-emerald-400 hover:underline font-mono font-medium sm:text-right">
+                        <a href={`tel:${field.value.replace(/[^+\d]/g, '')}`} className="text-emerald-400 hover:underline font-mono font-medium sm:text-right">
                           {field.value}
                         </a>
                       ) : field.key === 'website' && field.value.startsWith('http') ? (
@@ -85,6 +104,7 @@ export default function ContactPage() {
         title="Commercial Inquiry FAQs"
         subtitle="Common questions answered to assist you before contacting our desk."
         className="py-20 bg-white border-t border-slate-200"
+        items={faqs}
       />
     </div>
   );

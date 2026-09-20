@@ -16,7 +16,7 @@ export const companyData: CompanyDetails = {
     pan: 'AANFL4750H*',
     tan: 'JLDL01971E*',
     email: 'contact@lixborauron.com',
-    phone: '6239141145',
+    phone: '+91 62391-41145',
     website: 'https://lixborauron.com',
   },
 };

@@ -3,18 +3,19 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-interface Slide {
+export interface Slide {
   number: string;
   kicker: string;
   headlineTitle: string;
   subtitle: string;
   buttonText: string;
   buttonLink: string;
-  localImage: string;
-  fallbackImage: string;
+  localImage?: string;
+  fallbackImage?: string;
+  image?: string;
 }
 
-const slides: Slide[] = [
+const defaultSlides: Slide[] = [
   {
     number: '01',
     kicker: 'GLOBAL ALLIANCES',
@@ -50,7 +51,12 @@ const slides: Slide[] = [
   },
 ];
 
-export const VeritaseHero: React.FC = () => {
+interface VeritaseHeroProps {
+  slides?: Slide[];
+}
+
+export const VeritaseHero: React.FC<VeritaseHeroProps> = ({ slides: propSlides }) => {
+  const slides = propSlides && propSlides.length > 0 ? propSlides : defaultSlides;
   const [currentSlide, setCurrentSlide] = useState(0);
   const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
 
@@ -59,7 +65,7 @@ export const VeritaseHero: React.FC = () => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, [currentSlide]);
+  }, [currentSlide, slides.length]);
 
   const slide = slides[currentSlide];
 
@@ -72,8 +78,9 @@ export const VeritaseHero: React.FC = () => {
     <section className="relative h-screen min-h-screen w-full overflow-hidden bg-navy-950 text-white flex items-center">
       {/* Background Image Carousel with Vibrant Natural Overlay */}
       {slides.map((s, idx) => {
-        let imageSrc = s.localImage;
-        if (failedImages[s.localImage]) {
+        const defaultImg = s.image || s.localImage || s.fallbackImage || '';
+        let imageSrc = defaultImg;
+        if (failedImages[defaultImg] && s.fallbackImage) {
           imageSrc = s.fallbackImage;
         }
 
@@ -92,7 +99,7 @@ export const VeritaseHero: React.FC = () => {
               key={isActive ? `active-hero-zoom-${currentSlide}` : `inactive-hero-${idx}`}
               src={imageSrc}
               alt={s.headlineTitle}
-              onError={() => handleImageError(s.localImage)}
+              onError={() => handleImageError(defaultImg)}
               className={`absolute inset-0 h-full w-full object-cover object-center ${
                 isActive ? zoomAnimationClass : (idx % 2 === 0 ? 'scale-100' : 'scale-110')
               }`}

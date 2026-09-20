@@ -1,13 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
 import { FAQSection } from '../../components/sections/FAQSection';
+import { getFaqData } from '../../lib/sanity/data';
 
 export const metadata = {
   title: 'Frequently Asked Questions | Lixbor Auron LLP',
   description: 'Find clear answers to questions about Lixbor Auron LLP products, business experience, inquiry handling, quality standards, and quotation process.',
 };
 
-export default function FAQPage() {
+export default async function FAQPage() {
+  const faqs = await getFaqData();
+
   return (
     <div className="space-y-0">
       {/* Hero Banner (Extends to top: 0 behind transparent header) */}
@@ -35,6 +38,7 @@ export default function FAQPage() {
         showSearch={true}
         showCategoryBadge={true}
         className="py-24 bg-slate-50"
+        items={faqs}
       />
 
       {/* Contact CTA Section */}
