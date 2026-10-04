@@ -6,8 +6,18 @@ import { usePathname } from 'next/navigation';
 import { Logo } from '../ui/Logo';
 import { Icon } from '../ui/Icons';
 import { companyData, mainNavLinks, footerLegalLinks } from '../../lib/content/company';
+import { CompanyDetails } from '../../lib/types';
 
-export const Footer: React.FC = () => {
+interface FooterProps {
+  company?: CompanyDetails;
+  navLinks?: { name: string; href: string }[];
+  legalLinks?: { name: string; href: string }[];
+}
+
+export const Footer: React.FC<FooterProps> = ({ company, navLinks, legalLinks }) => {
+  const activeCompany = company || companyData;
+  const activeNavLinks = navLinks && navLinks.length > 0 ? navLinks : mainNavLinks;
+  const activeLegalLinks = legalLinks && legalLinks.length > 0 ? legalLinks : footerLegalLinks;
   const pathname = usePathname();
 
   const scrollToTop = () => {
@@ -51,7 +61,7 @@ export const Footer: React.FC = () => {
               QUICK LINKS
             </h4>
             <ul className="space-y-2.5 text-xs font-medium text-slate-600">
-              {mainNavLinks.map((link) => (
+              {activeNavLinks.map((link) => (
                 <li key={link.name}>
                   <Link href={link.href} className="hover:text-emerald-600 transition-colors">
                     {link.name}
@@ -72,7 +82,7 @@ export const Footer: React.FC = () => {
               SITE INFORMATION
             </h4>
             <ul className="space-y-2.5 text-xs font-medium text-slate-600">
-              {footerLegalLinks.map((link) => (
+              {activeLegalLinks.map((link) => (
                 <li key={link.name}>
                   <Link href={link.href} className="hover:text-emerald-600 transition-colors">
                     {link.name}
@@ -119,23 +129,23 @@ export const Footer: React.FC = () => {
             <div className="space-y-2.5 text-xs text-slate-600">
               <div>
                 <span className="text-[10px] text-slate-400 uppercase block font-sans">General Contact:</span>
-                <a href={`mailto:${companyData.placeholders.email}`} className="text-slate-800 font-mono font-medium hover:text-emerald-600 transition-colors">
-                  {companyData.placeholders.email}
+                <a href={`mailto:${activeCompany.placeholders.email}`} className="text-slate-800 font-mono font-medium hover:text-emerald-600 transition-colors">
+                  {activeCompany.placeholders.email}
                 </a>
               </div>
               <div>
                 <span className="text-[10px] text-slate-400 uppercase block font-sans">Phone / WhatsApp:</span>
-                <a href={`tel:${companyData.placeholders.phone.replace(/[^+\d]/g, '')}`} className="text-slate-800 font-mono font-medium hover:text-emerald-600 transition-colors">
-                  {companyData.placeholders.phone}
+                <a href={`tel:${activeCompany.placeholders.phone.replace(/[^+\d]/g, '')}`} className="text-slate-800 font-mono font-medium hover:text-emerald-600 transition-colors">
+                  {activeCompany.placeholders.phone}
                 </a>
               </div>
               <div>
                 <span className="text-[10px] text-slate-400 uppercase block font-sans">Corporate Office:</span>
-                <span className="text-slate-800 font-sans leading-tight block">{companyData.placeholders.registeredOffice}</span>
+                <span className="text-slate-800 font-sans leading-tight block">{activeCompany.placeholders.registeredOffice}</span>
               </div>
               <div>
                 <span className="text-[10px] text-slate-400 uppercase block font-sans">LLPIN / PAN / TAN:</span>
-                <span className="text-slate-800 font-mono text-[11px] block">{companyData.placeholders.llpin} · PAN: {companyData.placeholders.pan} · TAN: {companyData.placeholders.tan}</span>
+                <span className="text-slate-800 font-mono text-[11px] block">{activeCompany.placeholders.llpin} · PAN: {activeCompany.placeholders.pan} · TAN: {activeCompany.placeholders.tan}</span>
               </div>
             </div>
           </div>

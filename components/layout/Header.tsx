@@ -7,7 +7,12 @@ import { Logo } from '../ui/Logo';
 import { Icon } from '../ui/Icons';
 import { mainNavLinks } from '../../lib/content/company';
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+  navLinks?: { name: string; href: string }[];
+}
+
+export const Header: React.FC<HeaderProps> = ({ navLinks }) => {
+  const links = navLinks && navLinks.length > 0 ? navLinks : mainNavLinks;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
@@ -99,7 +104,7 @@ export const Header: React.FC = () => {
           {/* Desktop Nav & Action Button (Grouped on the right side) */}
           <div className="hidden md:flex items-center gap-6 lg:gap-8">
             <nav className="flex items-center gap-6 lg:gap-8">
-              {mainNavLinks.map((link) => {
+              {links.map((link) => {
                 const isActive = pathname === link.href;
                 return (
                   <Link
@@ -173,7 +178,7 @@ export const Header: React.FC = () => {
               <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-400">
                 Navigation Menu
               </div>
-              {mainNavLinks.map((link) => {
+              {links.map((link) => {
                 const isActive = pathname === link.href;
                 return (
                   <Link

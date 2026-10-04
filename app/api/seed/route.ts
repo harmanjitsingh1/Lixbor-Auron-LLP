@@ -1,15 +1,25 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from 'next-sanity';
+import { revalidateTag, revalidatePath } from 'next/cache';
+import { projectId, dataset, apiVersion, token } from '../../../lib/sanity/config';
+
 /**
- * Generates an NDJSON file of all 21 initial site documents.
- * Can be imported via: npx sanity dataset import scripts/initial-data.ndjson production
+ * AUTOMATED SANITY CMS SEED & SYNC ENDPOINT
+ * ===========================================
+ * Seeds all 21 core documents (Site Settings, Homepage, Who We Are, Contact,
+ * 8 Products, and 8 FAQ Items) directly into your Sanity dataset.
+ *
+ * Once run:
+ *   - Sanity Studio (/studio) will be 100% pre-populated with all real website copy.
+ *   - The client can open any document, edit any field, and click "Publish".
+ *   - No empty input boxes, no starting from scratch!
+ *
+ * HOW TO RUN:
+ *   Open in browser or make a request to:
+ *   https://<your-domain>/api/seed?secret=YOUR_REVALIDATE_SECRET
  */
-import fs from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, resolve } from 'path';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const documents = [
+const SEED_DOCUMENTS = [
   // 1. Site Settings
   {
     _id: 'siteSettings',
@@ -145,7 +155,7 @@ const documents = [
     },
   },
 
-  // 3. Who We Are
+  // 3. Who We Are Page
   {
     _id: 'whoWeArePage',
     _type: 'whoWeArePage',
@@ -210,7 +220,27 @@ const documents = [
     ],
   },
 
-  // 4. Products
+  // 4. Contact Page
+  {
+    _id: 'contactPage',
+    _type: 'contactPage',
+    title: 'Contact Page Content',
+    hero: {
+      kicker: 'CONNECT WITH OUR TRADE DESK',
+      title: 'Global Sourcing & Commercial Enquiries',
+      description:
+        'Whether you require technical specifications, commercial quotes, COA documentation, or long-term supply contract discussions, our trading team is at your disposal.',
+    },
+    enquiryCategories: [
+      { _key: 'c1', value: 'chemicals', label: 'Chemicals & Fertilizers (MgO, Urea, Sulphur, Melamine)' },
+      { _key: 'c2', value: 'polymers', label: 'Polymers (XLPE, Semiconductive, ABS, LDPE)' },
+      { _key: 'c3', value: 'mgo-specialty', label: 'Magnesium Oxide (MgO) Specialized Inquiry' },
+      { _key: 'c4', value: 'sourcing-partnership', label: 'Supplier / Manufacturing Partnership' },
+      { _key: 'c5', value: 'general', label: 'General Corporate / Trade Inquiry' },
+    ],
+  },
+
+  // 5. Products (8 items)
   {
     _id: 'prod-magnesium-oxide',
     _type: 'product',
@@ -419,7 +449,7 @@ const documents = [
     fallbackImageUrl: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=1000&q=80',
   },
 
-  // 5. FAQ Items
+  // 6. FAQ Items (8 items)
   {
     _id: 'faq-1',
     _type: 'faqItem',
@@ -485,29 +515,160 @@ const documents = [
     category: 'Products & Sourcing',
     order: 8,
   },
-
-  // 6. Contact Page
-  {
-    _id: 'contactPage',
-    _type: 'contactPage',
-    title: 'Contact Page Content',
-    hero: {
-      kicker: 'COMMERCIAL ENQUIRIES',
-      title: 'Speak to Our Trading Desk',
-      description:
-        'Whether you require technical specifications, commercial quotes, COA documentation, or long-term supply contract discussions.',
-    },
-    enquiryCategories: [
-      { _key: 'c1', value: 'chemicals', label: 'Chemicals & Fertilizers (MgO, Urea, Sulphur, Melamine)' },
-      { _key: 'c2', value: 'polymers', label: 'Polymers (XLPE, Semiconductive, ABS, LDPE)' },
-      { _key: 'c3', value: 'mgo-specialty', label: 'Magnesium Oxide (MgO) Specialized Inquiry' },
-      { _key: 'c4', value: 'sourcing-partnership', label: 'Supplier / Manufacturing Partnership' },
-      { _key: 'c5', value: 'general', label: 'General Corporate / Trade Inquiry' },
-    ],
-  },
 ];
 
-const ndjson = documents.map((doc) => JSON.stringify(doc)).join('\n') + '\n';
-const outputPath = resolve(__dirname, 'initial-data.ndjson');
-fs.writeFileSync(outputPath, ndjson, 'utf8');
-console.log(`✅ Exported ${documents.length} initial documents to ${outputPath}`);
+async function handleSeed(req: NextRequest) {
+  const secret = process.env.SANITY_REVALIDATE_SECRET || process.env.SANITY_WEBHOOK_SECRET;
+
+  const authHeader = req.headers.get('authorization');
+  const querySecret = req.nextUrl.searchParams.get('secret');
+
+  const providedSecret =
+    (authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null) || querySecret;
+
+  if (!secret || providedSecret !== secret) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Unauthorized: Invalid or missing secret parameter (?secret=YOUR_REVALIDATE_SECRET).',
+      },
+      { status: 401 }
+    );
+  }
+
+  const writeToken =
+    process.env.SANITY_API_WRITE_TOKEN?.trim() ||
+    process.env.SANITY_API_READ_TOKEN?.trim() ||
+    token;
+
+  if (!writeToken) {
+    return NextResponse.json(
+      {
+        success: false,
+        message:
+          'Missing Sanity API token. Please ensure SANITY_API_READ_TOKEN or SANITY_API_WRITE_TOKEN is configured in Vercel / .env.local with Editor permissions.',
+      },
+      { status: 400 }
+    );
+  }
+
+  // Create authenticated Sanity client with write permission
+  const client = createClient({
+    projectId,
+    dataset,
+    apiVersion,
+    useCdn: false,
+    token: writeToken,
+  });
+
+  const results: { id: string; type: string; status: string }[] = [];
+
+  try {
+    for (const doc of SEED_DOCUMENTS) {
+      await client.createOrReplace(doc);
+      results.push({ id: doc._id, type: doc._type, status: 'created_or_replaced' });
+    }
+
+    // Trigger full cache revalidation
+    const allTags = [
+      'siteSettings',
+      'homePage',
+      'whoWeArePage',
+      'product',
+      'products',
+      'faqItem',
+      'faq',
+      'contactPage',
+    ];
+    for (const tag of allTags) {
+      revalidateTag(tag);
+    }
+    revalidatePath('/', 'layout');
+
+    const isBrowser = req.headers.get('accept')?.includes('text/html');
+
+    if (isBrowser) {
+      const html = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="utf-8" />
+          <title>Sanity CMS Seeding Completed | Lixbor Auron LLP</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #070e17; color: #f8fafc; padding: 40px 20px; line-height: 1.6; }
+            .container { max-width: 760px; margin: 0 auto; background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+            h1 { color: #10b981; font-size: 26px; margin-top: 0; }
+            p { color: #94a3b8; font-size: 15px; }
+            .badge { display: inline-block; background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: bold; text-transform: uppercase; margin-bottom: 16px; }
+            .btn { display: inline-block; background: #10b981; color: #022c22; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; font-size: 14px; margin-right: 12px; margin-top: 12px; transition: background 0.2s; }
+            .btn:hover { background: #34d399; }
+            .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #e2e8f0; }
+            .btn-outline:hover { background: rgba(255,255,255,0.05); }
+            .list { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 16px; margin: 24px 0; font-family: monospace; font-size: 13px; max-height: 280px; overflow-y: auto; }
+            .item { padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; justify-content: space-between; }
+            .item span:first-child { color: #38bdf8; }
+            .item span:last-child { color: #10b981; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <span class="badge">CMS Status: Seed Completed</span>
+            <h1>All 21 Documents Seeded Successfully!</h1>
+            <p>Every single page, company detail, product (with grades and specs), and FAQ item has been created and published in your Sanity dataset.</p>
+            
+            <div class="list">
+              ${results.map((r) => `<div class="item"><span>${r.type} (${r.id})</span><span>✓ Published</span></div>`).join('')}
+            </div>
+
+            <p>Now open Sanity Studio to see all fields fully populated:</p>
+            <a href="/studio" class="btn">Open Sanity Studio ↗</a>
+            <a href="/products" class="btn btn-outline">View Live Products ↗</a>
+            <a href="/" class="btn btn-outline">View Live Homepage ↗</a>
+          </div>
+        </body>
+        </html>
+      `;
+      return new NextResponse(html, {
+        status: 200,
+        headers: { 'Content-Type': 'text/html; charset=utf-8' },
+      });
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: `Successfully seeded and published ${results.length} documents to Sanity!`,
+      count: results.length,
+      documents: results,
+      revalidated: true,
+      now: Date.now(),
+    });
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    console.error('[/api/seed] Error seeding Sanity:', errorMsg);
+
+    const isInsufficientPermissions =
+      errorMsg.includes('Insufficient permissions') ||
+      errorMsg.includes('403') ||
+      errorMsg.includes('Unauthorized');
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: isInsufficientPermissions
+          ? 'Permission Denied: Your Sanity token only has "Viewer" permission. Go to sanity.io/manage -> Project -> API -> Tokens and ensure the token has "Editor" permissions (read and write).'
+          : 'Error seeding Sanity dataset.',
+        error: errorMsg,
+      },
+      { status: isInsufficientPermissions ? 403 : 500 }
+    );
+  }
+}
+
+export async function GET(req: NextRequest) {
+  return handleSeed(req);
+}
+
+export async function POST(req: NextRequest) {
+  return handleSeed(req);
+}

@@ -1,9 +1,11 @@
 /**
  * Automated Seeding Script for Lixbor Auron LLP Sanity Studio
- * Usage: node scripts/seed-sanity.mjs
+ * Zero external dependencies — uses Node's built-in fetch.
+ * 
+ * Usage:
+ *   node scripts/seed-sanity.mjs
  */
 
-import { createClient } from '@sanity/client';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
 import fs from 'fs';
@@ -36,26 +38,16 @@ loadEnvFile(resolve(__dirname, '../.env'));
 const projectId = (process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '').trim() || '3cyxeuj4';
 const dataset = (process.env.NEXT_PUBLIC_SANITY_DATASET || '').trim() || 'production';
 const token = (process.env.SANITY_API_WRITE_TOKEN || process.env.SANITY_API_READ_TOKEN || '').trim();
+const apiVersion = '2026-10-04';
 
 if (!token) {
-  console.error('❌ Error: SANITY_API_WRITE_TOKEN or SANITY_API_READ_TOKEN is required to seed data.');
+  console.error('❌ Error: SANITY_API_READ_TOKEN or SANITY_API_WRITE_TOKEN is missing in .env.local.');
   process.exit(1);
 }
 
-const client = createClient({
-  projectId,
-  dataset,
-  apiVersion: '2024-03-01',
-  useCdn: false,
-  token,
-});
-
-async function seed() {
-  console.log(`🚀 Seeding Sanity dataset "${dataset}" for project "${projectId}"...`);
-
-  // 1. Site Settings Document
-  console.log('📦 Creating siteSettings...');
-  await client.createOrReplace({
+const documents = [
+  // 1. Site Settings
+  {
     _id: 'siteSettings',
     _type: 'siteSettings',
     name: 'Lixbor Auron LLP',
@@ -75,6 +67,8 @@ async function seed() {
       email: 'contact@lixborauron.com',
       phone: '+91 62391-41145',
       website: 'https://lixborauron.com',
+      iec: 'Applied / In Process',
+      gstin: 'Applied / In Process',
     },
     mainNavLinks: [
       { _key: 'nav-1', name: 'Home', href: '/' },
@@ -86,11 +80,10 @@ async function seed() {
       { _key: 'legal-1', name: 'Terms & Conditions', href: '/terms-and-conditions' },
       { _key: 'legal-2', name: 'Privacy Notice', href: '/privacy-notice' },
     ],
-  });
+  },
 
-  // 2. Homepage Document
-  console.log('📦 Creating homePage...');
-  await client.createOrReplace({
+  // 2. Homepage
+  {
     _id: 'homePage',
     _type: 'homePage',
     title: 'Homepage Content',
@@ -180,23 +173,29 @@ async function seed() {
       paragraph2:
         'Our group leadership traces its origin back to 1989 in the Indian iron and steel manufacturing sector. Today, we combine deep technical product insight with practical execution capability across global markets, enabling a streamlined structure with a sharply focused ambition to deliver superior B2B outcomes.',
     },
-  });
+    ctaSection: {
+      title: 'Ready to Streamline Your Industrial Raw Material Sourcing?',
+      description: 'Connect with our trade desk for technical specifications, commercial quotes, or custom sourcing requirements.',
+      buttonText: 'Submit Sourcing Inquiry',
+      buttonHref: '/contact',
+    },
+  },
 
-  // 3. Who We Are Document
-  console.log('📦 Creating whoWeArePage...');
-  await client.createOrReplace({
+  // 3. Who We Are
+  {
     _id: 'whoWeArePage',
     _type: 'whoWeArePage',
     title: 'Who We Are Content',
     hero: {
       kicker: 'ABOUT LIXBOR AURON LLP',
       title: 'Global Sourcing & Industrial Expertise',
-      description: 'A professionally managed trading company engaged in international sourcing, trading and distribution of chemicals, fertilizers and polymers.',
+      description:
+        'A professionally managed trading company engaged in international sourcing, trading and distribution of chemicals, fertilizers and polymers.',
       fallbackImageUrl: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=2000&q=80',
     },
     story: {
-      kicker: 'OUR HERITAGE',
-      title: '1989 Foundations 2026 Platform',
+      kicker: 'OUR HERITAGE & EVOLUTION',
+      title: 'From 1989 Industrial Foundations to a 2026 International Trading Platform',
       paragraph1:
         'Lixbor Auron LLP represents a powerful combination of proven industrial heritage and modern global trading capability. Incorporated in 2026 as an international trading entity, our roots extend back to 1989, when our leadership established a strong footprint in the iron and steel industry.',
       paragraph2:
@@ -214,7 +213,7 @@ async function seed() {
     ],
     vision: {
       kicker: 'VISION & STRATEGY',
-      title: 'Build → Expand → Globalize',
+      title: 'To Be Among the World’s Most Trusted International Trading Companies',
       tagline: 'Build → Expand → Globalize',
       description: 'Growing from a focused industrial trader into a diversified global organization known for operational excellence and customer reliability.',
       pillars: [
@@ -230,226 +229,309 @@ async function seed() {
       { _key: 'm2', year: '2026', title: 'Lixbor Auron LLP Platform', description: 'Incorporated Lixbor Auron LLP to expand operations into international trading of chemicals, fertilizers, and polymers.', highlight: true },
       { _key: 'm3', year: 'Future', title: 'Global Ambition', description: 'Continuous global expansion — "More Products. More Markets. More Connections." — building a worldwide trading presence.', highlight: false },
     ],
-  });
+    physicalTradingModel: [
+      { _key: 'ptm1', step: 1, title: 'Buy', action: 'Direct Procurement', description: 'Sourcing directly from verified global chemical, polymer, and mineral producers at competitive terms.' },
+      { _key: 'ptm2', step: 2, title: 'Ship', action: 'Maritime & Multimodal Freight', description: 'Coordinating international vessel chartering, container shipping, port handling, and shipping documentation.' },
+      { _key: 'ptm3', step: 3, title: 'Store', action: 'Strategic Warehousing', description: 'Managing secure storage facilities close to key industrial hubs to ensure buffer stock availability.' },
+      { _key: 'ptm4', step: 4, title: 'Sell', action: 'Commercial Distribution', description: 'Tailoring customized supply contracts and commercial terms for regional industrial end-users.' },
+      { _key: 'ptm5', step: 5, title: 'Blend', action: 'Value-Add Processing', description: 'Offering customized formulation blending, sifting, or packaging modifications when required.' },
+      { _key: 'ptm6', step: 6, title: 'Deliver', action: 'Just-in-Time Delivery', description: 'Final door-step delivery to manufacturing facilities, maintaining strict delivery schedules.' },
+    ],
+    sourcingProcess: [
+      { _key: 'sp1', step: 1, title: 'Understand', description: 'Deeply analyzing client chemical specifications, purity requirements, application constraints, and delivery schedules.' },
+      { _key: 'sp2', step: 2, title: 'Source', description: 'Identifying verified international producers and manufacturers capable of meeting stringent quality standards.' },
+      { _key: 'sp3', step: 3, title: 'Verify', description: 'Conducting lab testing, certificate of analysis (COA) verification, sample validation, and plant audits.' },
+      { _key: 'sp4', step: 4, title: 'Execute', description: 'Managing international trade finance, freight booking, customs compliance, and port handling seamlessly.' },
+      { _key: 'sp5', step: 5, title: 'Develop', description: 'Fostering long-term strategic supply relationships, post-delivery technical support, and contract continuity.' },
+    ],
+  },
 
-  // 4. Products Documents
-  console.log('📦 Creating product documents...');
-  const products = [
-    {
-      _id: 'prod-magnesium-oxide',
-      _type: 'product',
-      name: 'Magnesium Oxide (MgO)',
-      slug: { _type: 'slug', current: 'magnesium-oxide' },
-      category: 'Chemicals & Fertilizers',
-      order: 1,
-      isFlagship: true,
-      shortDescription: 'Core focus product available in specialized grades for agriculture, animal nutrition, and technical applications.',
-      fullDescription: 'Magnesium Oxide (MgO) represents Lixbor Auron LLP’s primary core product focus. We source and distribute high-purity MgO tailored to stringent global specifications across agricultural, animal nutrition, and industrial chemical sectors.',
-      keyApplications: ['Agriculture & Soil Health', 'Animal Nutrition & Feed Premixes', 'Construction Boards & Environmental Treatment'],
-      specifications: [
-        'Available in MgO purities ranging from 85% to 98%+',
-        'Custom mesh sizes (Powder, Granular)',
-        'Low heavy-metal profiles certified for feed applications',
-        'Controlled reactivity (Light Burned / Caustic Calcined)',
-      ],
-      fallbackImageUrl: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1000&q=80',
-      grades: [
-        {
-          _key: 'g1',
-          name: 'Agricultural Grade',
-          code: 'MgO-AGRI',
-          description: 'High-bioavailability magnesium source for soil enrichment, fertilizer formulations, and crop yield optimization.',
-          applications: ['Soil Conditioners', 'Blended NPK Fertilizers', 'Magnesium Deficiency Treatment', 'Foliar Formulations'],
-        },
-        {
-          _key: 'g2',
-          name: 'Animal Nutrition / Feed Grade',
-          code: 'MgO-FEED',
-          description: 'Purity-certified magnesium oxide formulated for ruminant nutrition, preventing grass tetany and supporting metabolic health.',
-          applications: ['Cattle & Ruminant Feed Supplements', 'Mineral Blocks & Premixes', 'Dietary Magnesium Source', 'Livestock Health'],
-        },
-        {
-          _key: 'g3',
-          name: 'Technical / Industrial Grade',
-          code: 'MgO-TECH',
-          description: 'High-purity reactive magnesium oxide for chemical processing, hydrometallurgy, water treatment, and construction boards.',
-          applications: ['Magnesium Board Manufacturing', 'Wastewater Neutralization', 'Chemical Synthesis', 'Rubber & Plastics Additives'],
-        },
-      ],
-    },
-    {
-      _id: 'prod-urea',
-      _type: 'product',
-      name: 'Urea',
-      slug: { _type: 'slug', current: 'urea' },
-      category: 'Chemicals & Fertilizers',
-      order: 2,
-      shortDescription: 'Versatile nitrogen product supplied in technical, prilled, industrial, and automotive (DEF/AdBlue) grades.',
-      fullDescription: 'High-nitrogen chemical compound essential for resin production, industrial chemical synthesis, and automotive exhaust fluid (DEF/AdBlue) manufacturing. Sourced directly from tier-1 chemical producers.',
-      keyApplications: ['Automotive DEF / AdBlue Production', 'Urea-Formaldehyde Resins & Adhesives', 'Industrial Chemical Intermediate'],
-      fallbackImageUrl: 'https://images.unsplash.com/photo-1585314062340-f1a5a7c9328d?auto=format&fit=crop&w=1000&q=80',
-    },
-    {
-      _id: 'prod-granular-sulphur',
-      _type: 'product',
-      name: 'Granular Sulphur',
-      slug: { _type: 'slug', current: 'granular-sulphur' },
-      category: 'Chemicals & Fertilizers',
-      order: 3,
-      shortDescription: 'High-purity elemental sulphur for fertilizer production, sulphuric acid plants, and industrial processing.',
-      fullDescription: 'Bright yellow elemental granular sulphur used extensively in the production of phosphate fertilizers, sulphuric acid manufacturing, rubber vulcanization, and chemical processing.',
-      keyApplications: ['Sulphuric Acid Manufacturing', 'Phosphate & Sulphur-Enriched Fertilizers', 'Rubber Vulcanization & Processing', 'Chemical & Explosive Manufacturing'],
-      fallbackImageUrl: 'https://images.unsplash.com/photo-1616886307848-7f6635699c43?auto=format&fit=crop&w=1000&q=80',
-    },
-    {
-      _id: 'prod-melamine',
-      _type: 'product',
-      name: 'Melamine',
-      slug: { _type: 'slug', current: 'melamine' },
-      category: 'Chemicals & Fertilizers',
-      order: 4,
-      shortDescription: 'Essential organic chemical intermediate for durable resins, laminates, surface coatings, and molding compounds.',
-      fullDescription: 'Melamine is a high-nitrogen heterocyclic compound critical for manufacturing melamine-formaldehyde resins, decorative laminates, wood adhesives, flame retardants, and automotive coatings.',
-      keyApplications: ['Decorative & Industrial Laminates', 'Wood Adhesives & Plywood Resins', 'Surface Coatings & Automotive Finishes', 'Flame Retardant Plastics'],
-      fallbackImageUrl: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=1000&q=80',
-    },
-    {
-      _id: 'prod-xlpe',
-      _type: 'product',
-      name: 'XLPE (Cross-Linked Polyethylene)',
-      slug: { _type: 'slug', current: 'xlpe' },
-      category: 'Polymers',
-      order: 5,
-      shortDescription: 'High-performance cross-linked polyethylene compound for power cable insulation and piping systems.',
-      fullDescription: 'XLPE compounds offer superior electrical insulation, thermal stability, and mechanical strength, making them the industry standard for medium and high-voltage power transmission cables.',
-      keyApplications: ['Medium & High Voltage Power Cable Insulation', 'Telecommunication Cable Jackets', 'Cross-linked PEX Piping Systems', 'Heavy-Duty Electrical Infrastructure'],
-      fallbackImageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1000&q=80',
-    },
-    {
-      _id: 'prod-semiconductive-compounds',
-      _type: 'product',
-      name: 'Semiconductive Compounds',
-      slug: { _type: 'slug', current: 'semiconductive-compounds' },
-      category: 'Polymers',
-      order: 6,
-      shortDescription: 'Specialized conductive polymer compounds for electrical field distribution in power cable systems.',
-      fullDescription: 'Engineered polymer compounds containing conductive carbon black filler, formulated for conductor and insulation shielding in medium and high-voltage power cables to prevent electrical stress concentrations.',
-      keyApplications: ['Conductor Shielding in MV/HV Power Cables', 'Insulation Shielding Layers', 'Stress Control in Cable Accessories & Joints', 'High-Reliability Electrical Power Systems'],
-      fallbackImageUrl: 'https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?auto=format&fit=crop&w=1000&q=80',
-    },
-    {
-      _id: 'prod-abs',
-      _type: 'product',
-      name: 'ABS (Acrylonitrile Butadiene Styrene)',
-      slug: { _type: 'slug', current: 'abs' },
-      category: 'Polymers',
-      order: 7,
-      shortDescription: 'Versatile engineering thermoplastic known for high impact resistance, dimensional stability, and aesthetic finish.',
-      fullDescription: 'ABS polymer resin combines the strength and rigidity of acrylonitrile and styrene polymers with the toughness of polybutadiene rubber. Widely used in automotive components, consumer electronics, and appliances.',
-      keyApplications: ['Automotive Interior & Exterior Trims', 'Consumer Electronics & Appliance Housings', 'Pipe Fittings & Architectural Hardware', '3D Printing & Industrial Prototyping'],
-      fallbackImageUrl: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1000&q=80',
-    },
-    {
-      _id: 'prod-ldpe',
-      _type: 'product',
-      name: 'LDPE (Low-Density Polyethylene)',
-      slug: { _type: 'slug', current: 'ldpe' },
-      category: 'Polymers',
-      order: 8,
-      shortDescription: 'Flexible, ductile thermoplastic compound ideal for packaging films, agricultural sheets, and flexible tubing.',
-      fullDescription: 'Low-Density Polyethylene resin offering high clarity, chemical inertness, and flexibility. Essential for heavy-duty industrial film packaging, agricultural mulch films, and squeeze bottles.',
-      keyApplications: ['Industrial Packaging & Shrink Films', 'Agricultural & Greenhouse Mulch Films', 'Flexible Tubing & Cable Jackets', 'Lamination Resins'],
-      fallbackImageUrl: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=1000&q=80',
-    },
-  ];
+  // 4. Products (8 items)
+  {
+    _id: 'prod-magnesium-oxide',
+    _type: 'product',
+    name: 'Magnesium Oxide (MgO)',
+    slug: { _type: 'slug', current: 'magnesium-oxide' },
+    category: 'Chemicals & Fertilizers',
+    order: 1,
+    isFlagship: true,
+    shortDescription: 'Core focus product available in specialized grades for agriculture, animal nutrition, and technical applications.',
+    fullDescription:
+      'Magnesium Oxide (MgO) represents Lixbor Auron LLP’s primary core product focus. We source and distribute high-purity MgO tailored to stringent global specifications across agricultural, animal nutrition, and industrial chemical sectors.',
+    keyApplications: [
+      'Agriculture & Soil Health',
+      'Animal Nutrition & Feed Premixes',
+      'Construction Boards & Environmental Treatment',
+    ],
+    specifications: [
+      'Available in MgO purities ranging from 85% to 98%+',
+      'Custom mesh sizes (Powder, Granular)',
+      'Low heavy-metal profiles certified for feed applications',
+      'Controlled reactivity (Light Burned / Caustic Calcined)',
+    ],
+    fallbackImageUrl: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1000&q=80',
+    grades: [
+      {
+        _key: 'g1',
+        name: 'Agricultural Grade',
+        code: 'MgO-AGRI',
+        description: 'High-bioavailability magnesium source for soil enrichment, fertilizer formulations, and crop yield optimization.',
+        applications: ['Soil Conditioners', 'Blended NPK Fertilizers', 'Magnesium Deficiency Treatment', 'Foliar Formulations'],
+      },
+      {
+        _key: 'g2',
+        name: 'Animal Nutrition / Feed Grade',
+        code: 'MgO-FEED',
+        description: 'Purity-certified magnesium oxide formulated for ruminant nutrition, preventing grass tetany and supporting metabolic health.',
+        applications: ['Cattle & Ruminant Feed Supplements', 'Mineral Blocks & Premixes', 'Dietary Magnesium Source', 'Livestock Health'],
+      },
+      {
+        _key: 'g3',
+        name: 'Technical / Industrial Grade',
+        code: 'MgO-TECH',
+        description: 'High-purity reactive magnesium oxide for chemical processing, hydrometallurgy, water treatment, and construction boards.',
+        applications: ['Magnesium Board Manufacturing', 'Wastewater Neutralization', 'Chemical Synthesis', 'Rubber & Plastics Additives'],
+      },
+    ],
+  },
+  {
+    _id: 'prod-urea',
+    _type: 'product',
+    name: 'Urea',
+    slug: { _type: 'slug', current: 'urea' },
+    category: 'Chemicals & Fertilizers',
+    order: 2,
+    shortDescription: 'Versatile nitrogen product supplied in technical, prilled, industrial, and automotive (DEF/AdBlue) grades.',
+    fullDescription:
+      'High-nitrogen chemical compound essential for resin production, industrial chemical synthesis, and automotive exhaust fluid (DEF/AdBlue) manufacturing. Sourced directly from tier-1 chemical producers.',
+    keyApplications: [
+      'Automotive DEF / AdBlue Production',
+      'Urea-Formaldehyde Resins & Adhesives',
+      'Industrial Chemical Intermediate',
+    ],
+    specifications: [
+      'Nitrogen Content: 46% min',
+      'Grades: Technical / Industrial Grade, Automotive / DEF Grade',
+      'Low biuret options for technical & industrial applications',
+    ],
+    fallbackImageUrl: 'https://images.unsplash.com/photo-1585314062340-f1a5a7c9328d?auto=format&fit=crop&w=1000&q=80',
+  },
+  {
+    _id: 'prod-granular-sulphur',
+    _type: 'product',
+    name: 'Granular Sulphur',
+    slug: { _type: 'slug', current: 'granular-sulphur' },
+    category: 'Chemicals & Fertilizers',
+    order: 3,
+    shortDescription: 'High-purity elemental sulphur for fertilizer production, sulphuric acid plants, and industrial processing.',
+    fullDescription:
+      'Bright yellow elemental granular sulphur used extensively in the production of phosphate fertilizers, sulphuric acid manufacturing, rubber vulcanization, and chemical processing.',
+    keyApplications: [
+      'Sulphuric Acid Manufacturing',
+      'Phosphate & Sulphur-Enriched Fertilizers',
+      'Rubber Vulcanization & Processing',
+      'Chemical & Explosive Manufacturing',
+    ],
+    specifications: [
+      'Purity: 99.5% min elemental sulphur',
+      'Form: Bright Yellow Granular (2-6mm)',
+      'Low ash and moisture content',
+    ],
+    fallbackImageUrl: 'https://images.unsplash.com/photo-1616886307848-7f6635699c43?auto=format&fit=crop&w=1000&q=80',
+  },
+  {
+    _id: 'prod-melamine',
+    _type: 'product',
+    name: 'Melamine',
+    slug: { _type: 'slug', current: 'melamine' },
+    category: 'Chemicals & Fertilizers',
+    order: 4,
+    shortDescription: 'Essential organic chemical intermediate for durable resins, laminates, surface coatings, and molding compounds.',
+    fullDescription:
+      'Melamine is a high-nitrogen heterocyclic compound critical for manufacturing melamine-formaldehyde resins, decorative laminates, wood adhesives, flame retardants, and automotive coatings.',
+    keyApplications: [
+      'Decorative & Industrial Laminates',
+      'Wood Adhesives & Plywood Resins',
+      'Surface Coatings & Automotive Finishes',
+      'Flame Retardant Plastics',
+    ],
+    specifications: [
+      'Purity: 99.8% min',
+      'Appearance: Fine White Powder',
+      'Low pH volatility and moisture content',
+    ],
+    fallbackImageUrl: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=1000&q=80',
+  },
+  {
+    _id: 'prod-xlpe',
+    _type: 'product',
+    name: 'XLPE (Cross-Linked Polyethylene)',
+    slug: { _type: 'slug', current: 'xlpe' },
+    category: 'Polymers',
+    order: 5,
+    shortDescription: 'High-performance cross-linked polyethylene compound for power cable insulation and piping systems.',
+    fullDescription:
+      'XLPE compounds offer superior electrical insulation, thermal stability, and mechanical strength, making them the industry standard for medium and high-voltage power transmission cables.',
+    keyApplications: [
+      'Medium & High Voltage Power Cable Insulation',
+      'Telecommunication Cable Jackets',
+      'Cross-linked PEX Piping Systems',
+      'Heavy-Duty Electrical Infrastructure',
+    ],
+    specifications: [
+      'Silane cross-linkable & peroxide cross-linkable options',
+      'Excellent dielectric strength & thermal breakdown resistance',
+      'Compliant with international IEC cable standards',
+    ],
+    fallbackImageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1000&q=80',
+  },
+  {
+    _id: 'prod-semiconductive-compounds',
+    _type: 'product',
+    name: 'Semiconductive Compounds',
+    slug: { _type: 'slug', current: 'semiconductive-compounds' },
+    category: 'Polymers',
+    order: 6,
+    shortDescription: 'Specialized conductive polymer compounds for electrical field distribution in power cable systems.',
+    fullDescription:
+      'Engineered polymer compounds containing conductive carbon black filler, formulated for conductor and insulation shielding in medium and high-voltage power cables to prevent electrical stress concentrations.',
+    keyApplications: [
+      'Conductor Shielding in MV/HV Power Cables',
+      'Insulation Shielding Layers',
+      'Stress Control in Cable Accessories & Joints',
+      'High-Reliability Electrical Power Systems',
+    ],
+    specifications: [
+      'Strictly controlled volume resistivity',
+      'Smooth surface extrusion quality',
+      'High compatibility with XLPE insulation layers',
+    ],
+    fallbackImageUrl: 'https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?auto=format&fit=crop&w=1000&q=80',
+  },
+  {
+    _id: 'prod-abs',
+    _type: 'product',
+    name: 'ABS (Acrylonitrile Butadiene Styrene)',
+    slug: { _type: 'slug', current: 'abs' },
+    category: 'Polymers',
+    order: 7,
+    shortDescription: 'Versatile engineering thermoplastic known for high impact resistance, dimensional stability, and aesthetic finish.',
+    fullDescription:
+      'ABS polymer resin combines the strength and rigidity of acrylonitrile and styrene polymers with the toughness of polybutadiene rubber. Widely used in automotive components, consumer electronics, and appliances.',
+    keyApplications: [
+      'Automotive Interior & Exterior Trims',
+      'Consumer Electronics & Appliance Housings',
+      'Pipe Fittings & Architectural Hardware',
+      '3D Printing & Industrial Prototyping',
+    ],
+    specifications: [
+      'Injection molding & extrusion grades available',
+      'High impact strength and heat resistance',
+      'Custom color compounding options',
+    ],
+    fallbackImageUrl: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1000&q=80',
+  },
+  {
+    _id: 'prod-ldpe',
+    _type: 'product',
+    name: 'LDPE (Low-Density Polyethylene)',
+    slug: { _type: 'slug', current: 'ldpe' },
+    category: 'Polymers',
+    order: 8,
+    shortDescription: 'Flexible, ductile thermoplastic compound ideal for packaging films, agricultural sheets, and flexible tubing.',
+    fullDescription:
+      'Low-Density Polyethylene resin offering high clarity, chemical inertness, and flexibility. Essential for heavy-duty industrial film packaging, agricultural mulch films, and squeeze bottles.',
+    keyApplications: [
+      'Industrial Packaging & Shrink Films',
+      'Agricultural & Greenhouse Mulch Films',
+      'Flexible Tubing & Cable Jackets',
+      'Lamination Resins',
+    ],
+    specifications: [
+      'MFI range tailored for blow film & extrusion',
+      'High tensile strength & tear resistance',
+      'Food-contact compliant grades available',
+    ],
+    fallbackImageUrl: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=1000&q=80',
+  },
 
-  for (const p of products) {
-    await client.createOrReplace(p);
-  }
+  // 5. FAQ Items (8 items)
+  {
+    _id: 'faq-1',
+    _type: 'faqItem',
+    question: 'What products do we deal in?',
+    answer: 'We deal in chemicals, fertilizers, and polymers.',
+    category: 'Products & Sourcing',
+    order: 1,
+  },
+  {
+    _id: 'faq-2',
+    _type: 'faqItem',
+    question: 'What experience supports our business?',
+    answer: 'Although incorporated in 2026, we have extensive experience in the iron and steel industry dating back to 1989.',
+    category: 'Company & Heritage',
+    order: 2,
+  },
+  {
+    _id: 'faq-3',
+    _type: 'faqItem',
+    question: 'How do we handle inquiries?',
+    answer: 'We follow a structured five-step process applied to every inquiry.',
+    category: 'Process & Operations',
+    order: 3,
+  },
+  {
+    _id: 'faq-4',
+    _type: 'faqItem',
+    question: 'Why should clients trust us?',
+    answer: 'Clients trust us for our experience, reliable sourcing, quality products, transparent dealings, and commitment to long-term partnerships.',
+    category: 'Company & Heritage',
+    order: 4,
+  },
+  {
+    _id: 'faq-5',
+    _type: 'faqItem',
+    question: 'Do our products meet international quality standards?',
+    answer: 'Yes, we prioritize reliability, global sourcing, and a commitment to quality and service.',
+    category: 'Quality Assurance',
+    order: 5,
+  },
+  {
+    _id: 'faq-6',
+    _type: 'faqItem',
+    question: 'What is our quotation process like?',
+    answer: 'We follow a structured process applied to every inquiry to ensure specific details for a smooth process.',
+    category: 'Process & Operations',
+    order: 6,
+  },
+  {
+    _id: 'faq-7',
+    _type: 'faqItem',
+    question: 'Can we fulfill bulk orders and deliver on time?',
+    answer: 'Yes, we focus on reliable supply and global sourcing to meet global demand efficiently.',
+    category: 'Logistics & Supply',
+    order: 7,
+  },
+  {
+    _id: 'faq-8',
+    _type: 'faqItem',
+    question: 'How is Magnesium Oxide utilized?',
+    answer:
+      'Magnesium Oxide (MgO) as a high-demand industrial raw material is used in manufacturing applications. For example, it is used in the production of fertilizers, animal feed, chemicals, refractory materials, and other industrial products, depending on the required grade and specification.',
+    category: 'Products & Sourcing',
+    order: 8,
+  },
 
-  // 5. FAQ Items
-  console.log('📦 Creating FAQ items...');
-  const faqs = [
-    {
-      _id: 'faq-1',
-      _type: 'faqItem',
-      question: 'What products do we deal in?',
-      answer: 'We deal in chemicals, fertilizers, and polymers.',
-      category: 'Products & Sourcing',
-      order: 1,
-    },
-    {
-      _id: 'faq-2',
-      _type: 'faqItem',
-      question: 'What experience supports our business?',
-      answer: 'Although incorporated in 2026, we have extensive experience in the iron and steel industry dating back to 1989.',
-      category: 'Company & Heritage',
-      order: 2,
-    },
-    {
-      _id: 'faq-3',
-      _type: 'faqItem',
-      question: 'How do we handle inquiries?',
-      answer: 'We follow a structured five-step process applied to every inquiry.',
-      category: 'Process & Operations',
-      order: 3,
-    },
-    {
-      _id: 'faq-4',
-      _type: 'faqItem',
-      question: 'Why should clients trust us?',
-      answer: 'Clients trust us for our experience, reliable sourcing, quality products, transparent dealings, and commitment to long-term partnerships.',
-      category: 'Company & Heritage',
-      order: 4,
-    },
-    {
-      _id: 'faq-5',
-      _type: 'faqItem',
-      question: 'Do our products meet international quality standards?',
-      answer: 'Yes, we prioritize reliability, global sourcing, and a commitment to quality and service.',
-      category: 'Quality Assurance',
-      order: 5,
-    },
-    {
-      _id: 'faq-6',
-      _type: 'faqItem',
-      question: 'What is our quotation process like?',
-      answer: 'We follow a structured process applied to every inquiry to ensure specific details for a smooth process.',
-      category: 'Process & Operations',
-      order: 6,
-    },
-    {
-      _id: 'faq-7',
-      _type: 'faqItem',
-      question: 'Can we fulfill bulk orders and deliver on time?',
-      answer: 'Yes, we focus on reliable supply and global sourcing to meet global demand efficiently.',
-      category: 'Logistics & Supply',
-      order: 7,
-    },
-    {
-      _id: 'faq-8',
-      _type: 'faqItem',
-      question: 'How is Magnesium Oxide utilized?',
-      answer: 'Magnesium Oxide (MgO) as a high-demand industrial raw material is used in manufacturing applications. For example, it is used in the production of fertilizers, animal feed, chemicals, refractory materials, and other industrial products, depending on the required grade and specification.',
-      category: 'Products & Sourcing',
-      order: 8,
-    },
-  ];
-
-  for (const f of faqs) {
-    await client.createOrReplace(f);
-  }
-
-  // 6. Contact Page Document
-  console.log('📦 Creating contactPage...');
-  await client.createOrReplace({
+  // 6. Contact Page
+  {
     _id: 'contactPage',
     _type: 'contactPage',
     title: 'Contact Page Content',
     hero: {
       kicker: 'COMMERCIAL ENQUIRIES',
       title: 'Speak to Our Trading Desk',
-      description: 'Whether you require technical specifications, commercial quotes, COA documentation, or long-term supply contract discussions.',
+      description:
+        'Whether you require technical specifications, commercial quotes, COA documentation, or long-term supply contract discussions.',
     },
     enquiryCategories: [
       { _key: 'c1', value: 'chemicals', label: 'Chemicals & Fertilizers (MgO, Urea, Sulphur, Melamine)' },
@@ -458,12 +540,47 @@ async function seed() {
       { _key: 'c4', value: 'sourcing-partnership', label: 'Supplier / Manufacturing Partnership' },
       { _key: 'c5', value: 'general', label: 'General Corporate / Trade Inquiry' },
     ],
+  },
+];
+
+async function runSeed() {
+  console.log(`\n🚀 Seeding Sanity dataset "${dataset}" (Project: ${projectId})...\n`);
+
+  const mutations = documents.map((doc) => ({
+    createOrReplace: doc,
+  }));
+
+  const url = `https://${projectId}.api.sanity.io/v${apiVersion}/data/mutate/${dataset}?returnIds=true`;
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ mutations }),
   });
 
-  console.log('✅ Sanity seeding completed successfully!');
+  const data = await res.json();
+
+  if (!res.ok) {
+    console.error('❌ Sanity API Error:', JSON.stringify(data, null, 2));
+    if (data.error?.description?.includes('Insufficient permissions')) {
+      console.error('\n⚠️ PERMISSION DENIED: Your token is a "Viewer" token.');
+      console.error('👉 Fix: Go to sanity.io/manage -> Your Project -> API -> Tokens.');
+      console.error('👉 Change permission to "Editor" or create a new token with "Editor" permission.\n');
+    }
+    process.exit(1);
+  }
+
+  console.log(`✅ SUCCESS! Published ${documents.length} documents to Sanity:`);
+  documents.forEach((d) => {
+    console.log(`   ✓ ${d._type.padEnd(16)} -> ${d._id}`);
+  });
+  console.log('\n🎉 All content is now live in Sanity Studio!\n');
 }
 
-seed().catch((err) => {
-  console.error('❌ Seeding failed:', err);
+runSeed().catch((err) => {
+  console.error('❌ Unexpected error:', err);
   process.exit(1);
 });

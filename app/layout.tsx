@@ -4,6 +4,7 @@ import './globals.css';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
 import { HashScrollHandler } from '../components/ui/HashScrollHandler';
+import { getSiteSettings } from '../lib/sanity/data';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -55,18 +56,20 @@ export const viewport = {
   maximumScale: 1,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { companyData, mainNavLinks, footerLegalLinks } = await getSiteSettings();
+
   return (
     <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} ${playfair.variable}`}>
       <body className="flex min-h-screen flex-col bg-white text-slate-900 font-sans antialiased">
         <HashScrollHandler />
-        <Header />
+        <Header navLinks={mainNavLinks} />
         <main className="flex-1">{children}</main>
-        <Footer />
+        <Footer company={companyData} navLinks={mainNavLinks} legalLinks={footerLegalLinks} />
       </body>
     </html>
   );
