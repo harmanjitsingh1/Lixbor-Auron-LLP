@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
     }
 
     for (const tag of tagsToRevalidate) {
-      revalidateTag(tag);
+      revalidateTag(tag, 'default');
     }
     // Also revalidate the root layout so Header/Footer pick up siteSettings changes
     revalidatePath('/', 'layout');

@@ -110,9 +110,11 @@ export const ContactForm: React.FC<ContactFormProps> = ({
           email: '',
           country: '',
           product: '',
+          customProduct: '',
           estimatedQuantity: '',
           message: '',
         });
+        setIsCustomProduct(false);
       } else {
         setSubmitStatus('error');
         setResponseMessage(data.message || 'Something went wrong. Please try again later.');

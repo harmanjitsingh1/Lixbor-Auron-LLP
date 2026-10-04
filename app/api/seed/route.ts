@@ -565,7 +565,7 @@ async function handleSeed(req: NextRequest) {
 
   try {
     for (const doc of SEED_DOCUMENTS) {
-      await client.createOrReplace(doc);
+      await (client as any).createOrReplace(doc);
       results.push({ id: doc._id, type: doc._type, status: 'created_or_replaced' });
     }
 
@@ -581,7 +581,7 @@ async function handleSeed(req: NextRequest) {
       'contactPage',
     ];
     for (const tag of allTags) {
-      revalidateTag(tag);
+      revalidateTag(tag, 'default');
     }
     revalidatePath('/', 'layout');
 
