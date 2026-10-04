@@ -1,17 +1,19 @@
 import React, { Suspense } from 'react';
 import { ContactForm } from '../../components/sections/ContactForm';
 import { FAQSection } from '../../components/sections/FAQSection';
-import { getContactPageData, getSiteSettings, getFaqData } from '../../lib/sanity/data';
+import { getContactPageData, getSiteSettings, getFaqData, getProductsData } from '../../lib/sanity/data';
 
 export default async function ContactPage() {
-  const [contactData, settings, faqs] = await Promise.all([
+  const [contactData, settings, faqs, productsData] = await Promise.all([
     getContactPageData(),
     getSiteSettings(),
     getFaqData(),
+    getProductsData(),
   ]);
 
   const { companyData } = settings;
-  const { hero } = contactData;
+  const { hero, enquiryCategories } = contactData;
+  const { products } = productsData;
 
   const dynamicCompanyDetailFields = [
     { label: 'Registered Office', key: 'registeredOffice', value: companyData.placeholders.registeredOffice },
@@ -49,7 +51,7 @@ export default async function ContactPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             <div className="lg:col-span-7">
               <Suspense fallback={<div className="p-8 text-center">Loading Form...</div>}>
-                <ContactForm />
+                <ContactForm products={products} enquiryCategories={enquiryCategories} />
               </Suspense>
             </div>
 

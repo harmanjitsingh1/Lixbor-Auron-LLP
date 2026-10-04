@@ -3,8 +3,17 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Icon } from '../ui/Icons';
+import { Product } from '../../lib/types';
 
-export const ContactForm: React.FC = () => {
+interface ContactFormProps {
+  products?: Product[];
+  enquiryCategories?: { value: string; label: string }[];
+}
+
+export const ContactForm: React.FC<ContactFormProps> = ({
+  products = [],
+  enquiryCategories = [],
+}) => {
   const searchParams = useSearchParams();
   const prefilledProduct = searchParams?.get('product') || '';
 
@@ -13,9 +22,12 @@ export const ContactForm: React.FC = () => {
     email: '',
     country: '',
     product: prefilledProduct || '',
+    customProduct: '',
     estimatedQuantity: '',
     message: '',
   });
+
+  const [isCustomProduct, setIsCustomProduct] = useState(false);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,12 +36,22 @@ export const ContactForm: React.FC = () => {
 
   useEffect(() => {
     if (prefilledProduct) {
-      setFormData((prev) => ({
-        ...prev,
-        product: prev.product || prefilledProduct,
-      }));
+      const match = products.find(
+        (p) => p.name.toLowerCase() === prefilledProduct.toLowerCase()
+      );
+      if (match) {
+        setIsCustomProduct(false);
+        setFormData((prev) => ({ ...prev, product: match.name }));
+      } else {
+        setIsCustomProduct(true);
+        setFormData((prev) => ({
+          ...prev,
+          customProduct: prefilledProduct,
+          product: '',
+        }));
+      }
     }
-  }, [prefilledProduct]);
+  }, [prefilledProduct, products]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -62,11 +84,20 @@ export const ContactForm: React.FC = () => {
     setIsSubmitting(true);
     setSubmitStatus('idle');
 
+    const finalProduct = isCustomProduct
+      ? formData.customProduct.trim() || 'Custom / Unlisted Product'
+      : formData.product;
+
+    const payload = {
+      ...formData,
+      product: finalProduct,
+    };
+
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
@@ -186,20 +217,78 @@ export const ContactForm: React.FC = () => {
             {errors.country && <p className="text-xs text-red-500 font-medium">{errors.country}</p>}
           </div>
 
-          {/* Product Interested In */}
+          {/* Product Interested In (Driven by Sanity Studio) */}
           <div className="space-y-2">
             <label htmlFor="product" className="block text-xs font-semibold uppercase tracking-wider text-slate-700">
               Product Interested In
             </label>
-            <input
-              type="text"
-              id="product"
-              name="product"
-              value={formData.product}
-              onChange={handleChange}
-              placeholder="e.g. Magnesium Oxide (MgO) / XLPE / Urea"
-              className="w-full rounded-lg border border-slate-300 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
-            />
+            {products.length > 0 || enquiryCategories.length > 0 ? (
+              <>
+                <select
+                  id="product"
+                  name="product"
+                  value={isCustomProduct ? '__custom__' : formData.product}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === '__custom__') {
+                      setIsCustomProduct(true);
+                      setFormData((prev) => ({ ...prev, product: '' }));
+                    } else {
+                      setIsCustomProduct(false);
+                      setFormData((prev) => ({ ...prev, product: val, customProduct: '' }));
+                    }
+                  }}
+                  className="w-full rounded-lg border border-slate-300 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all cursor-pointer"
+                >
+                  <option value="">Select a Product or Inquiry Category...</option>
+
+                  {products.length > 0 && (
+                    <optgroup label="Products & Commodities (from Catalog)">
+                      {products.map((p) => (
+                        <option key={p.id} value={p.name}>
+                          {p.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                  )}
+
+                  {enquiryCategories.length > 0 && (
+                    <optgroup label="General Inquiry Categories">
+                      {enquiryCategories.map((c) => (
+                        <option key={c.value} value={c.label}>
+                          {c.label}
+                        </option>
+                      ))}
+                    </optgroup>
+                  )}
+
+                  <option value="__custom__">+ Other / Unlisted Product or Custom Grade</option>
+                </select>
+
+                {isCustomProduct && (
+                  <input
+                    type="text"
+                    id="customProduct"
+                    name="customProduct"
+                    value={formData.customProduct}
+                    onChange={handleChange}
+                    placeholder="Enter custom product name or specifications..."
+                    className="w-full rounded-lg border border-emerald-400 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all animate-fadeIn"
+                    autoFocus
+                  />
+                )}
+              </>
+            ) : (
+              <input
+                type="text"
+                id="product"
+                name="product"
+                value={formData.product}
+                onChange={handleChange}
+                placeholder="e.g. Magnesium Oxide (MgO) / XLPE / Urea"
+                className="w-full rounded-lg border border-slate-300 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+              />
+            )}
           </div>
         </div>
 

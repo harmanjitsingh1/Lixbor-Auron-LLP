@@ -1,9 +1,18 @@
 import React from 'react';
 import { Timeline } from '../../components/sections/TimelineItem';
+import { ProcessFlow } from '../../components/sections/ProcessFlow';
 import { getWhoWeAreData } from '../../lib/sanity/data';
 
 export default async function WhoWeArePage() {
-  const { hero, story, coreValues, vision, milestones } = await getWhoWeAreData();
+  const {
+    hero,
+    story,
+    coreValues,
+    vision,
+    milestones,
+    physicalTradingModel,
+    sourcingProcess,
+  } = await getWhoWeAreData();
 
   return (
     <div className="space-y-0">
@@ -109,7 +118,14 @@ export default async function WhoWeArePage() {
         </div>
       </section>
 
-      {/* 5. Journey Milestones */}
+      {/* 5. Physical Trading Model & 5-Step Sourcing Process (from Sanity CMS) */}
+      <section className="py-24 bg-slate-50 border-t border-slate-200">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <ProcessFlow tradingModel={physicalTradingModel} sourcingSteps={sourcingProcess} />
+        </div>
+      </section>
+
+      {/* 6. Journey Milestones */}
       <section className="py-24 bg-white border-t border-slate-200">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="space-y-3 max-w-3xl">

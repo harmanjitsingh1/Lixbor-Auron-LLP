@@ -1,14 +1,25 @@
-import React from 'react';
 import { physicalTradingModelData, sourcingProcessData } from '../../lib/content/who-we-are';
+import { TradingStep, SourcingStep } from '../../lib/types';
 import { Icon } from '../ui/Icons';
 
-export const ProcessFlow: React.FC = () => {
+interface ProcessFlowProps {
+  tradingModel?: TradingStep[];
+  sourcingSteps?: SourcingStep[];
+}
+
+export const ProcessFlow: React.FC<ProcessFlowProps> = ({
+  tradingModel,
+  sourcingSteps,
+}) => {
+  const model = tradingModel && tradingModel.length > 0 ? tradingModel : physicalTradingModelData;
+  const steps = sourcingSteps && sourcingSteps.length > 0 ? sourcingSteps : sourcingProcessData;
+
   return (
     <div className="space-y-16">
       {/* 1. End-to-End Physical Trading Model */}
       <div className="space-y-8">
         <div className="text-center max-w-2xl mx-auto space-y-2">
-          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-500">
+          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600">
             OUR OPERATIONAL MODEL
           </span>
           <h3 className="text-2xl sm:text-3xl font-semibold text-slate-900">
@@ -20,7 +31,7 @@ export const ProcessFlow: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
-          {physicalTradingModelData.map((item, idx) => (
+          {model.map((item, idx) => (
             <div
               key={item.step}
               className="relative group bg-white border border-slate-200 rounded-xl p-5 hover:border-sky-400 hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
@@ -63,7 +74,7 @@ export const ProcessFlow: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-            {sourcingProcessData.map((step) => (
+            {steps.map((step) => (
               <div
                 key={step.step}
                 className="bg-navy-900/90 border border-white/10 rounded-xl p-5 backdrop-blur-md space-y-3 hover:border-sky-400/50 transition-colors"
