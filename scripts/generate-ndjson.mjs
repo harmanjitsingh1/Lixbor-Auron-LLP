@@ -60,7 +60,7 @@ const documents = [
         subtitle: 'Connecting global markets with certified industrial raw materials and reliable supply.',
         buttonText: 'EXPLORE',
         buttonLink: '/products',
-        fallbackImage: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=2000&q=80',
+        fallbackImage: '/images/hero/hero-1.webp',
       },
       {
         _key: 'slide-2',
@@ -70,7 +70,7 @@ const documents = [
         subtitle: 'High-purity agricultural, feed, and technical grades from certified producers.',
         buttonText: 'EXPLORE PRODUCTS',
         buttonLink: '/products#mgo-focus',
-        fallbackImage: 'https://images.unsplash.com/photo-1616886307848-7f6635699c43?auto=format&fit=crop&w=2000&q=80',
+        fallbackImage: '/images/hero/hero-2.webp',
       },
       {
         _key: 'slide-3',
@@ -80,7 +80,7 @@ const documents = [
         subtitle: 'Decades of industrial foundation delivering operational reliability and global trade solutions.',
         buttonText: 'WHO WE ARE',
         buttonLink: '/who-we-are',
-        fallbackImage: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=2000&q=80',
+        fallbackImage: '/images/hero/hero-3.webp',
       },
     ],
     essenceSection: {
@@ -155,7 +155,7 @@ const documents = [
       title: 'Global Sourcing & Industrial Expertise',
       description:
         'A professionally managed trading company engaged in international sourcing, trading and distribution of chemicals, fertilizers and polymers.',
-      fallbackImageUrl: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=2000&q=80',
+      fallbackImageUrl: '/images/hero/hero-3.webp',
     },
     story: {
       kicker: 'OUR HERITAGE & EVOLUTION',
@@ -233,7 +233,7 @@ const documents = [
       'Low heavy-metal profiles certified for feed applications',
       'Controlled reactivity (Light Burned / Caustic Calcined)',
     ],
-    fallbackImageUrl: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1000&q=80',
+    fallbackImageUrl: '/images/cards/card-1.webp',
     grades: [
       {
         _key: 'g1',
@@ -278,7 +278,7 @@ const documents = [
       'Grades: Technical / Industrial Grade, Automotive / DEF Grade',
       'Low biuret options for technical & industrial applications',
     ],
-    fallbackImageUrl: 'https://images.unsplash.com/photo-1585314062340-f1a5a7c9328d?auto=format&fit=crop&w=1000&q=80',
+    fallbackImageUrl: '/images/cards/card-1.webp',
   },
   {
     _id: 'prod-granular-sulphur',
@@ -301,7 +301,7 @@ const documents = [
       'Form: Bright Yellow Granular (2-6mm)',
       'Low ash and moisture content',
     ],
-    fallbackImageUrl: 'https://images.unsplash.com/photo-1616886307848-7f6635699c43?auto=format&fit=crop&w=1000&q=80',
+    fallbackImageUrl: '/images/cards/card-1.webp',
   },
   {
     _id: 'prod-melamine',
@@ -324,7 +324,7 @@ const documents = [
       'Appearance: Fine White Powder',
       'Low pH volatility and moisture content',
     ],
-    fallbackImageUrl: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=1000&q=80',
+    fallbackImageUrl: '/images/cards/card-1.webp',
   },
   {
     _id: 'prod-xlpe',
@@ -347,7 +347,7 @@ const documents = [
       'Excellent dielectric strength & thermal breakdown resistance',
       'Compliant with international IEC cable standards',
     ],
-    fallbackImageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1000&q=80',
+    fallbackImageUrl: '/images/cards/card-2.webp',
   },
   {
     _id: 'prod-semiconductive-compounds',
@@ -370,7 +370,7 @@ const documents = [
       'Smooth surface extrusion quality',
       'High compatibility with XLPE insulation layers',
     ],
-    fallbackImageUrl: 'https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?auto=format&fit=crop&w=1000&q=80',
+    fallbackImageUrl: '/images/cards/card-2.webp',
   },
   {
     _id: 'prod-abs',
@@ -393,7 +393,7 @@ const documents = [
       'High impact strength and heat resistance',
       'Custom color compounding options',
     ],
-    fallbackImageUrl: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1000&q=80',
+    fallbackImageUrl: '/images/cards/card-2.webp',
   },
   {
     _id: 'prod-ldpe',
@@ -416,7 +416,7 @@ const documents = [
       'High tensile strength & tear resistance',
       'Food-contact compliant grades available',
     ],
-    fallbackImageUrl: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=1000&q=80',
+    fallbackImageUrl: '/images/cards/card-2.webp',
   },
 
   // 5. FAQ Items

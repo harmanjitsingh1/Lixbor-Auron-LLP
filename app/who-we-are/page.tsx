@@ -1,7 +1,33 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import { Timeline } from '../../components/sections/TimelineItem';
 import { ProcessFlow } from '../../components/sections/ProcessFlow';
 import { getWhoWeAreData } from '../../lib/sanity/data';
+import { JsonLd } from '../../components/seo/JsonLd';
+
+export const metadata: Metadata = {
+  title: 'Who We Are | 1989 Foundations & Global Trading Platform',
+  description:
+    'Discover Lixbor Auron LLP: rooted in 1989 industrial manufacturing foundations and incorporated in 2026 as an agile physical commodity sourcing and supply platform.',
+  keywords: [
+    'Lixbor Auron LLP history',
+    'Khanna Punjab commodity trading',
+    'iron and steel heritage 1989',
+    'physical trading model',
+    'industrial sourcing process',
+    'international trade compliance',
+    'B2B commodities distributor India',
+  ],
+  alternates: {
+    canonical: '/who-we-are',
+  },
+  openGraph: {
+    title: 'Who We Are — Heritage & Sourcing Platform | Lixbor Auron LLP',
+    description:
+      'Rooted in 1989 industrial manufacturing foundations, Lixbor Auron LLP operates an agile, integrity-first international physical trading model.',
+    url: '/who-we-are',
+  },
+};
 
 export default async function WhoWeArePage() {
   const {
@@ -14,8 +40,24 @@ export default async function WhoWeArePage() {
     sourcingProcess,
   } = await getWhoWeAreData();
 
+  const aboutPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    name: 'Who We Are — Lixbor Auron LLP',
+    description:
+      'Corporate heritage, core values, physical commodity trading methodology, and 5-step sourcing process of Lixbor Auron LLP.',
+    mainEntity: {
+      '@type': 'Organization',
+      name: 'Lixbor Auron LLP',
+      foundingDate: '1989',
+      description: story.paragraph1,
+    },
+  };
+
   return (
     <div className="space-y-0">
+      <JsonLd data={aboutPageSchema} />
+
       {/* 1. Page Hero Banner (Extends to top: 0 behind transparent header) */}
       <section className="relative pt-36 sm:pt-44 pb-24 bg-[#070e17] text-white overflow-hidden border-b border-white/10">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900 via-[#070e17] to-[#070e17] opacity-90" />

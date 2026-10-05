@@ -1,9 +1,38 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { VeritaseHero } from '../components/sections/VeritaseHero';
 import { VeritaseCards } from '../components/sections/VeritaseCards';
 import { FAQSection } from '../components/sections/FAQSection';
 import { getHomePageData, getFaqData } from '../lib/sanity/data';
+
+export const metadata: Metadata = {
+  title: 'Global Commodities & Industrial Raw Materials Trading',
+  description:
+    'Lixbor Auron LLP is an international trading platform sourcing and supplying Magnesium Oxide (MgO), fertilizers, industrial chemicals, and polymers. Backed by 1989 industrial foundations.',
+  keywords: [
+    'Lixbor Auron LLP',
+    'Magnesium Oxide supplier',
+    'MgO grades',
+    'MgO Agricultural Grade',
+    'MgO Feed Grade',
+    'MgO Technical Grade',
+    'Urea trading India',
+    'Granular Sulphur bulk',
+    'Melamine industrial supplier',
+    'XLPE compounds',
+    'commodity trading company Khanna Punjab',
+  ],
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: 'Lixbor Auron LLP | Global Sourcing. Industrial Expertise. Reliable Supply.',
+    description:
+      'International trading platform sourcing and supplying Magnesium Oxide (MgO), fertilizers, chemicals, and polymers.',
+    url: '/',
+  },
+};
 
 export default async function HomePage() {
   const [homeData, faqs] = await Promise.all([

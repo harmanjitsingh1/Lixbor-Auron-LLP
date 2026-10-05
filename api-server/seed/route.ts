@@ -1,51 +1,9 @@
-/**
- * Automated Seeding Script for Lixbor Auron LLP Sanity Studio
- * Zero external dependencies — uses Node's built-in fetch.
- * 
- * Usage:
- *   node scripts/seed-sanity.mjs
- */
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from 'next-sanity';
+import { revalidateTag, revalidatePath } from 'next/cache';
+import { projectId, dataset, apiVersion, token } from '../../lib/sanity/config';
 
-import { fileURLToPath } from 'url';
-import { dirname, resolve } from 'path';
-import fs from 'fs';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-// Simple env loader
-function loadEnvFile(filePath) {
-  if (fs.existsSync(filePath)) {
-    const lines = fs.readFileSync(filePath, 'utf8').split(/\r?\n/);
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (!trimmed || trimmed.startsWith('#')) continue;
-      const eqIdx = trimmed.indexOf('=');
-      if (eqIdx !== -1) {
-        const key = trimmed.slice(0, eqIdx).trim();
-        const val = trimmed.slice(eqIdx + 1).trim().replace(/^["']|["']$/g, '');
-        if (!process.env[key]) {
-          process.env[key] = val;
-        }
-      }
-    }
-  }
-}
-
-loadEnvFile(resolve(__dirname, '../.env.local'));
-loadEnvFile(resolve(__dirname, '../.env'));
-
-const projectId = (process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '').trim() || '3cyxeuj4';
-const dataset = (process.env.NEXT_PUBLIC_SANITY_DATASET || '').trim() || 'production';
-const token = (process.env.SANITY_API_WRITE_TOKEN || process.env.SANITY_API_READ_TOKEN || '').trim();
-const apiVersion = '2026-10-04';
-
-if (!token) {
-  console.error('❌ Error: SANITY_API_READ_TOKEN or SANITY_API_WRITE_TOKEN is missing in .env.local.');
-  process.exit(1);
-}
-
-const documents = [
+const SEED_DOCUMENTS = [
   // 1. Site Settings
   {
     _id: 'siteSettings',
@@ -181,7 +139,7 @@ const documents = [
     },
   },
 
-  // 3. Who We Are
+  // 3. Who We Are Page
   {
     _id: 'whoWeArePage',
     _type: 'whoWeArePage',
@@ -191,7 +149,7 @@ const documents = [
       title: 'Global Sourcing & Industrial Expertise',
       description:
         'A professionally managed trading company engaged in international sourcing, trading and distribution of chemicals, fertilizers and polymers.',
-      fallbackImageUrl: '/images/hero/hero-3.webp',
+      fallbackImageUrl: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=2000&q=80',
     },
     story: {
       kicker: 'OUR HERITAGE & EVOLUTION',
@@ -246,7 +204,27 @@ const documents = [
     ],
   },
 
-  // 4. Products (8 items)
+  // 4. Contact Page
+  {
+    _id: 'contactPage',
+    _type: 'contactPage',
+    title: 'Contact Page Content',
+    hero: {
+      kicker: 'CONNECT WITH OUR TRADE DESK',
+      title: 'Global Sourcing & Commercial Enquiries',
+      description:
+        'Whether you require technical specifications, commercial quotes, COA documentation, or long-term supply contract discussions, our trading team is at your disposal.',
+    },
+    enquiryCategories: [
+      { _key: 'c1', value: 'chemicals', label: 'Chemicals & Fertilizers (MgO, Urea, Sulphur, Melamine)' },
+      { _key: 'c2', value: 'polymers', label: 'Polymers (XLPE, Semiconductive, ABS, LDPE)' },
+      { _key: 'c3', value: 'mgo-specialty', label: 'Magnesium Oxide (MgO) Specialized Inquiry' },
+      { _key: 'c4', value: 'sourcing-partnership', label: 'Supplier / Manufacturing Partnership' },
+      { _key: 'c5', value: 'general', label: 'General Corporate / Trade Inquiry' },
+    ],
+  },
+
+  // 5. Products (8 items)
   {
     _id: 'prod-magnesium-oxide',
     _type: 'product',
@@ -269,7 +247,7 @@ const documents = [
       'Low heavy-metal profiles certified for feed applications',
       'Controlled reactivity (Light Burned / Caustic Calcined)',
     ],
-    fallbackImageUrl: '/images/cards/card-1.webp',
+    fallbackImageUrl: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1000&q=80',
     grades: [
       {
         _key: 'g1',
@@ -314,7 +292,7 @@ const documents = [
       'Grades: Technical / Industrial Grade, Automotive / DEF Grade',
       'Low biuret options for technical & industrial applications',
     ],
-    fallbackImageUrl: '/images/cards/card-1.webp',
+    fallbackImageUrl: 'https://images.unsplash.com/photo-1585314062340-f1a5a7c9328d?auto=format&fit=crop&w=1000&q=80',
   },
   {
     _id: 'prod-granular-sulphur',
@@ -337,7 +315,7 @@ const documents = [
       'Form: Bright Yellow Granular (2-6mm)',
       'Low ash and moisture content',
     ],
-    fallbackImageUrl: '/images/cards/card-1.webp',
+    fallbackImageUrl: 'https://images.unsplash.com/photo-1616886307848-7f6635699c43?auto=format&fit=crop&w=1000&q=80',
   },
   {
     _id: 'prod-melamine',
@@ -360,7 +338,7 @@ const documents = [
       'Appearance: Fine White Powder',
       'Low pH volatility and moisture content',
     ],
-    fallbackImageUrl: '/images/cards/card-1.webp',
+    fallbackImageUrl: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=1000&q=80',
   },
   {
     _id: 'prod-xlpe',
@@ -383,7 +361,7 @@ const documents = [
       'Excellent dielectric strength & thermal breakdown resistance',
       'Compliant with international IEC cable standards',
     ],
-    fallbackImageUrl: '/images/cards/card-2.webp',
+    fallbackImageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1000&q=80',
   },
   {
     _id: 'prod-semiconductive-compounds',
@@ -406,7 +384,7 @@ const documents = [
       'Smooth surface extrusion quality',
       'High compatibility with XLPE insulation layers',
     ],
-    fallbackImageUrl: '/images/cards/card-2.webp',
+    fallbackImageUrl: 'https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?auto=format&fit=crop&w=1000&q=80',
   },
   {
     _id: 'prod-abs',
@@ -429,7 +407,7 @@ const documents = [
       'High impact strength and heat resistance',
       'Custom color compounding options',
     ],
-    fallbackImageUrl: '/images/cards/card-2.webp',
+    fallbackImageUrl: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1000&q=80',
   },
   {
     _id: 'prod-ldpe',
@@ -452,10 +430,10 @@ const documents = [
       'High tensile strength & tear resistance',
       'Food-contact compliant grades available',
     ],
-    fallbackImageUrl: '/images/cards/card-2.webp',
+    fallbackImageUrl: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=1000&q=80',
   },
 
-  // 5. FAQ Items (8 items)
+  // 6. FAQ Items (8 items)
   {
     _id: 'faq-1',
     _type: 'faqItem',
@@ -521,66 +499,110 @@ const documents = [
     category: 'Products & Sourcing',
     order: 8,
   },
-
-  // 6. Contact Page
-  {
-    _id: 'contactPage',
-    _type: 'contactPage',
-    title: 'Contact Page Content',
-    hero: {
-      kicker: 'COMMERCIAL ENQUIRIES',
-      title: 'Speak to Our Trading Desk',
-      description:
-        'Whether you require technical specifications, commercial quotes, COA documentation, or long-term supply contract discussions.',
-    },
-    enquiryCategories: [
-      { _key: 'c1', value: 'chemicals', label: 'Chemicals & Fertilizers (MgO, Urea, Sulphur, Melamine)' },
-      { _key: 'c2', value: 'polymers', label: 'Polymers (XLPE, Semiconductive, ABS, LDPE)' },
-      { _key: 'c3', value: 'mgo-specialty', label: 'Magnesium Oxide (MgO) Specialized Inquiry' },
-      { _key: 'c4', value: 'sourcing-partnership', label: 'Supplier / Manufacturing Partnership' },
-      { _key: 'c5', value: 'general', label: 'General Corporate / Trade Inquiry' },
-    ],
-  },
 ];
 
-async function runSeed() {
-  console.log(`\n🚀 Seeding Sanity dataset "${dataset}" (Project: ${projectId})...\n`);
+async function handleSeed(req: NextRequest) {
+  const secret = process.env.SANITY_REVALIDATE_SECRET || process.env.SANITY_WEBHOOK_SECRET;
 
-  const mutations = documents.map((doc) => ({
-    createOrReplace: doc,
-  }));
+  const authHeader = req.headers.get('authorization');
+  const querySecret = req.nextUrl.searchParams.get('secret');
 
-  const url = `https://${projectId}.api.sanity.io/v${apiVersion}/data/mutate/${dataset}?returnIds=true`;
+  const providedSecret =
+    (authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null) || querySecret;
 
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ mutations }),
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    console.error('❌ Sanity API Error:', JSON.stringify(data, null, 2));
-    if (data.error?.description?.includes('Insufficient permissions')) {
-      console.error('\n⚠️ PERMISSION DENIED: Your token is a "Viewer" token.');
-      console.error('👉 Fix: Go to sanity.io/manage -> Your Project -> API -> Tokens.');
-      console.error('👉 Change permission to "Editor" or create a new token with "Editor" permission.\n');
-    }
-    process.exit(1);
+  if (!secret || providedSecret !== secret) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Unauthorized: Invalid or missing secret parameter (?secret=YOUR_REVALIDATE_SECRET).',
+      },
+      { status: 401 }
+    );
   }
 
-  console.log(`✅ SUCCESS! Published ${documents.length} documents to Sanity:`);
-  documents.forEach((d) => {
-    console.log(`   ✓ ${d._type.padEnd(16)} -> ${d._id}`);
+  const writeToken =
+    process.env.SANITY_API_WRITE_TOKEN?.trim() ||
+    process.env.SANITY_API_READ_TOKEN?.trim() ||
+    token;
+
+  if (!writeToken) {
+    return NextResponse.json(
+      {
+        success: false,
+        message:
+          'Missing Sanity API token. Please ensure SANITY_API_READ_TOKEN or SANITY_API_WRITE_TOKEN is configured in Vercel / .env.local with Editor permissions.',
+      },
+      { status: 400 }
+    );
+  }
+
+  // Create authenticated Sanity client with write permission
+  const client = createClient({
+    projectId,
+    dataset,
+    apiVersion,
+    useCdn: false,
+    token: writeToken,
   });
-  console.log('\n🎉 All content is now live in Sanity Studio!\n');
+
+  const results: { id: string; type: string; status: string }[] = [];
+
+  try {
+    for (const doc of SEED_DOCUMENTS) {
+      await (client as any).createOrReplace(doc);
+      results.push({ id: doc._id, type: doc._type, status: 'created_or_replaced' });
+    }
+
+    // Trigger full cache revalidation
+    const allTags = [
+      'siteSettings',
+      'homePage',
+      'whoWeArePage',
+      'product',
+      'products',
+      'faqItem',
+      'faq',
+      'contactPage',
+    ];
+    for (const tag of allTags) {
+      revalidateTag(tag, 'default');
+    }
+    revalidatePath('/', 'layout');
+
+    return NextResponse.json({
+      success: true,
+      message: `Successfully seeded and published ${results.length} documents to Sanity!`,
+      count: results.length,
+      documents: results,
+      revalidated: true,
+      now: Date.now(),
+    });
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    console.error('[/api/seed] Error seeding Sanity:', errorMsg);
+
+    const isInsufficientPermissions =
+      errorMsg.includes('Insufficient permissions') ||
+      errorMsg.includes('403') ||
+      errorMsg.includes('Unauthorized');
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: isInsufficientPermissions
+          ? 'Permission Denied: Your Sanity token only has "Viewer" permission. Go to sanity.io/manage -> Project -> API -> Tokens and ensure the token has "Editor" permissions (read and write).'
+          : 'Error seeding Sanity dataset.',
+        error: errorMsg,
+      },
+      { status: isInsufficientPermissions ? 403 : 500 }
+    );
+  }
 }
 
-runSeed().catch((err) => {
-  console.error('❌ Unexpected error:', err);
-  process.exit(1);
-});
+export async function GET(req: NextRequest) {
+  return handleSeed(req);
+}
+
+export async function POST(req: NextRequest) {
+  return handleSeed(req);
+}

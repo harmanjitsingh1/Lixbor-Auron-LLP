@@ -25,6 +25,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({
     customProduct: '',
     estimatedQuantity: '',
     message: '',
+    botcheck: '',
   });
 
   const [isCustomProduct, setIsCustomProduct] = useState(false);
@@ -33,6 +34,25 @@ export const ContactForm: React.FC<ContactFormProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [responseMessage, setResponseMessage] = useState('');
+  const [referenceId, setReferenceId] = useState<string | null>(null);
+
+  // Floating Toast confirmation state
+  const [toast, setToast] = useState<{
+    show: boolean;
+    type: 'success' | 'error';
+    title: string;
+    message: string;
+    referenceId?: string;
+  } | null>(null);
+
+  // Automatically dismiss the toast after 6 seconds
+  useEffect(() => {
+    if (!toast?.show) return;
+    const timer = setTimeout(() => {
+      setToast((prev) => (prev ? { ...prev, show: false } : null));
+    }, 6000);
+    return () => clearTimeout(timer);
+  }, [toast?.show]);
 
   useEffect(() => {
     if (prefilledProduct) {
@@ -88,23 +108,62 @@ export const ContactForm: React.FC<ContactFormProps> = ({
       ? formData.customProduct.trim() || 'Custom / Unlisted Product'
       : formData.product;
 
-    const payload = {
-      ...formData,
-      product: finalProduct,
+    const accessKey =
+      process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY ||
+      '2d4de260-acb9-40a0-b378-79644dc7f8d2';
+
+
+    const generatedRef = `LA-RFQ-${Math.floor(100000 + Math.random() * 900000)}`;
+
+    const web3Payload = {
+      access_key: accessKey,
+      subject: `New Commercial RFQ: ${finalProduct || 'General Sourcing'} - ${formData.fullName.trim()} [${generatedRef}]`,
+      from_name: 'Lixbor Auron Trade Desk',
+      name: formData.fullName.trim(),
+      email: formData.email.trim(),
+      'Reference ID': generatedRef,
+      'Product Interested In': finalProduct || 'General Commodity Sourcing',
+      'Country': formData.country.trim(),
+      'Estimated Quantity': formData.estimatedQuantity.trim() || 'Not specified',
+      'Message': formData.message.trim(),
+      ...(formData.botcheck ? { botcheck: formData.botcheck } : {}),
     };
 
     try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      let isSuccess = false;
+      let statusMsg = '';
 
-      const data = await res.json();
+      // 1. Direct Web3Forms submission from the browser
+      try {
+        const res = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify(web3Payload),
+        });
 
-      if (res.ok && data.success) {
+        const data = await res.json();
+        if (res.ok && data.success) {
+          isSuccess = true;
+          statusMsg =
+            data.message ||
+            'Your quote request has been dispatched to our trade desk via Web3Forms.';
+        } else {
+          statusMsg = data.message || 'Submission failed via Web3Forms.';
+        }
+      } catch (browserFetchError) {
+        console.error('Direct Web3Forms submission error:', browserFetchError);
+        statusMsg = 'Network error while submitting. Please check your connection or email info@lixborauron.com directly.';
+      }
+
+      if (isSuccess) {
         setSubmitStatus('success');
-        setResponseMessage(data.message || 'Thank you! Your quote request has been submitted successfully.');
+        setResponseMessage(
+          'Thank you! Your quote request has been received. Our trade desk will get in touch shortly.'
+        );
+        setReferenceId(generatedRef);
         setFormData({
           fullName: '',
           email: '',
@@ -113,28 +172,110 @@ export const ContactForm: React.FC<ContactFormProps> = ({
           customProduct: '',
           estimatedQuantity: '',
           message: '',
+          botcheck: '',
         });
         setIsCustomProduct(false);
+
+        // Display rich floating Toast confirmation
+        setToast({
+          show: true,
+          type: 'success',
+          title: 'Quote Request Sent Successfully!',
+          message: `Thank you, ${formData.fullName.trim()}. Your inquiry has been sent to our trade desk via Web3Forms.`,
+          referenceId: generatedRef,
+        });
       } else {
         setSubmitStatus('error');
-        setResponseMessage(data.message || 'Something went wrong. Please try again later.');
+        setResponseMessage(statusMsg || 'Something went wrong. Please try again later.');
+
+        setToast({
+          show: true,
+          type: 'error',
+          title: 'Submission Unsuccessful',
+          message: statusMsg || 'Unable to submit your quote request. Please try again.',
+        });
       }
     } catch {
+      const netErrorMsg = 'Network error. Please check your connection and try again.';
       setSubmitStatus('error');
-      setResponseMessage('Network error. Please check your connection and try again.');
+      setResponseMessage(netErrorMsg);
+      setToast({
+        show: true,
+        type: 'error',
+        title: 'Connection Error',
+        message: netErrorMsg,
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
+
   return (
-    <div className="bg-white rounded-2xl p-6 sm:p-10 border border-slate-200 shadow-xl">
-      <div className="space-y-2 mb-8">
-        <h3 className="text-2xl font-bold text-slate-900">Get Quote Inquiry Form</h3>
-        <p className="text-sm text-slate-600 font-light">
-          Submit your product interested in, target volume, or trade specifications to receive a commercial quote.
-        </p>
-      </div>
+    <>
+      {/* Floating Toast Notification */}
+      {toast && (
+        <div
+          role="status"
+          aria-live="polite"
+          className={`fixed top-5 right-5 sm:top-6 sm:right-6 z-[9999] max-w-md w-[calc(100%-2.5rem)] transition-all duration-300 ease-out transform pointer-events-auto ${
+            toast.show
+              ? 'translate-y-0 opacity-100 scale-100'
+              : '-translate-y-4 opacity-0 pointer-events-none scale-95'
+          }`}
+        >
+          <div
+            className={`rounded-2xl p-4 sm:p-5 shadow-2xl backdrop-blur-xl border flex items-start gap-3.5 sm:gap-4 ${
+              toast.type === 'success'
+                ? 'bg-slate-900/95 text-white border-emerald-500/50 shadow-emerald-950/40'
+                : 'bg-slate-900/95 text-white border-red-500/50 shadow-red-950/40'
+            }`}
+          >
+            <div
+              className={`p-2 rounded-xl shrink-0 flex items-center justify-center ${
+                toast.type === 'success'
+                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                  : 'bg-red-500/20 text-red-400 border border-red-500/30'
+              }`}
+            >
+              <Icon
+                name={toast.type === 'success' ? 'CheckCircle2' : 'X'}
+                size={22}
+                className={toast.type === 'success' ? 'text-emerald-400' : 'text-red-400'}
+              />
+            </div>
+
+            <div className="flex-1 min-w-0 pr-1">
+              <h4 className="text-sm font-bold text-white tracking-tight">{toast.title}</h4>
+              <p className="mt-1 text-xs text-slate-300 font-light leading-relaxed">{toast.message}</p>
+              {toast.referenceId && (
+                <div className="mt-2.5 flex items-center gap-1.5 text-[11px] font-mono text-emerald-400 bg-emerald-950/80 border border-emerald-500/30 px-2.5 py-1 rounded-md w-fit">
+                  <span className="text-slate-400">REF:</span>
+                  <span className="font-semibold tracking-wide">{toast.referenceId}</span>
+                </div>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setToast((prev) => (prev ? { ...prev, show: false } : null))}
+              className="text-slate-400 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-white/10 shrink-0 cursor-pointer"
+              aria-label="Close notification"
+            >
+              <Icon name="X" size={16} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div className="bg-white rounded-2xl p-6 sm:p-10 border border-slate-200 shadow-xl">
+        <div className="space-y-2 mb-8">
+          <h3 className="text-2xl font-bold text-slate-900">Get Quote Inquiry Form</h3>
+          <p className="text-sm text-slate-600 font-light">
+            Submit your product interested in, target volume, or trade specifications to receive a commercial quote.
+          </p>
+        </div>
+
 
       {/* Submission Success Alert */}
       {submitStatus === 'success' && (
@@ -143,6 +284,11 @@ export const ContactForm: React.FC<ContactFormProps> = ({
           <div className="text-sm">
             <h4 className="font-bold">Quote Request Submitted</h4>
             <p className="mt-1 font-light">{responseMessage}</p>
+            {referenceId && (
+              <p className="mt-2 font-mono text-xs text-emerald-800 bg-emerald-100/70 inline-block px-2.5 py-1 rounded-md border border-emerald-200">
+                Reference ID: <span className="font-bold">{referenceId}</span>
+              </p>
+            )}
           </div>
         </div>
       )}
@@ -159,6 +305,24 @@ export const ContactForm: React.FC<ContactFormProps> = ({
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Anti-spam Honeypot field for Web3Forms (hidden from users) */}
+        <input
+          type="checkbox"
+          name="botcheck"
+          id="botcheck"
+          className="hidden"
+          style={{ display: 'none' }}
+          tabIndex={-1}
+          autoComplete="off"
+          checked={!!formData.botcheck}
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              botcheck: e.target.checked ? 'true' : '',
+            }))
+          }
+        />
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {/* Full Name* */}
           <div className="space-y-2">
@@ -349,5 +513,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({
         </button>
       </form>
     </div>
+    </>
   );
 };
+

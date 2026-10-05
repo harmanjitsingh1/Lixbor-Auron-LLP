@@ -1,4 +1,14 @@
 import React from 'react';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Terms & Conditions | Commercial Governance',
+  description:
+    'Commercial terms and conditions governing quotations, product specifications, non-disclosure confidentiality, and transactions with Lixbor Auron LLP.',
+  alternates: {
+    canonical: '/terms-and-conditions',
+  },
+};
 
 export default function TermsAndConditionsPage() {
   return (

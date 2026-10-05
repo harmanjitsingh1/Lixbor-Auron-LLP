@@ -1,18 +1,54 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { FAQSection } from '../../components/sections/FAQSection';
 import { getFaqData } from '../../lib/sanity/data';
+import { JsonLd } from '../../components/seo/JsonLd';
 
-export const metadata = {
-  title: 'Frequently Asked Questions | Lixbor Auron LLP',
-  description: 'Find clear answers to questions about Lixbor Auron LLP products, business experience, inquiry handling, quality standards, and quotation process.',
+export const metadata: Metadata = {
+  title: 'Frequently Asked Questions (FAQ) | Trade Desk & Commercial Terms',
+  description:
+    'Clear answers to common questions regarding Lixbor Auron LLP products, Magnesium Oxide grades, Certificate of Analysis (COA) testing, shipping terms (FOB/CIF), and bulk RFQ quotes.',
+  keywords: [
+    'Lixbor Auron FAQ',
+    'Magnesium Oxide questions',
+    'chemical trading terms',
+    'COA test certificates commodity',
+    'FOB CIF Incoterms chemical sourcing',
+    'bulk minimum order quantity MOQ',
+    'quotation process commodities India',
+  ],
+  alternates: {
+    canonical: '/faq',
+  },
+  openGraph: {
+    title: 'Frequently Asked Questions | Lixbor Auron LLP',
+    description:
+      'Verified insights into our industrial commodities, testing standards, trade compliance, and inquiry handling.',
+    url: '/faq',
+  },
 };
 
 export default async function FAQPage() {
   const faqs = await getFaqData();
 
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  };
+
   return (
     <div className="space-y-0">
+      <JsonLd data={faqSchema} />
+
       {/* Hero Banner (Extends to top: 0 behind transparent header) */}
       <section className="relative pt-36 sm:pt-44 pb-24 bg-[#070e17] text-white overflow-hidden border-b border-white/10">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900 via-[#070e17] to-[#070e17] opacity-90" />

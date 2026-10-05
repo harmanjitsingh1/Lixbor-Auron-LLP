@@ -144,7 +144,7 @@ export async function getHomePageData(): Promise<HomePageData> {
         buttonText: 'EXPLORE',
         buttonLink: '/products',
         image: '/images/hero/hero-1.webp',
-        fallbackImage: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=2000&q=80',
+        fallbackImage: '/images/hero/hero-1.webp',
       },
       {
         number: '02',
@@ -154,7 +154,7 @@ export async function getHomePageData(): Promise<HomePageData> {
         buttonText: 'EXPLORE PRODUCTS',
         buttonLink: '/products#mgo-focus',
         image: '/images/hero/hero-2.webp',
-        fallbackImage: 'https://images.unsplash.com/photo-1616886307848-7f6635699c43?auto=format&fit=crop&w=2000&q=80',
+        fallbackImage: '/images/hero/hero-2.webp',
       },
       {
         number: '03',
@@ -164,7 +164,7 @@ export async function getHomePageData(): Promise<HomePageData> {
         buttonText: 'WHO WE ARE',
         buttonLink: '/who-we-are',
         image: '/images/hero/hero-3.webp',
-        fallbackImage: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=2000&q=80',
+        fallbackImage: '/images/hero/hero-3.webp',
       },
     ],
     essenceSection: {
@@ -227,16 +227,21 @@ export async function getHomePageData(): Promise<HomePageData> {
 
     if (data) {
       const heroSlides = data.heroSlides?.length
-        ? data.heroSlides.map((s: any) => ({
-            number: s.number || '01',
-            kicker: s.kicker || '',
-            headlineTitle: s.headlineTitle || '',
-            subtitle: s.subtitle || '',
-            buttonText: s.buttonText || 'EXPLORE',
-            buttonLink: s.buttonLink || '/products',
-            image: urlForImage(s.image) || s.fallbackImage || '/images/hero/hero-1.webp',
-            fallbackImage: s.fallbackImage,
-          }))
+        ? data.heroSlides.map((s: any, idx: number) => {
+            const localPath = `/images/hero/hero-${(idx % 3) + 1}.webp`;
+            const cmsImg = urlForImage(s.image);
+            const imageSrc = cmsImg && !cmsImg.includes('unsplash.com') ? cmsImg : localPath;
+            return {
+              number: s.number || `0${idx + 1}`,
+              kicker: s.kicker || '',
+              headlineTitle: s.headlineTitle || '',
+              subtitle: s.subtitle || '',
+              buttonText: s.buttonText || 'EXPLORE',
+              buttonLink: s.buttonLink || '/products',
+              image: imageSrc,
+              fallbackImage: localPath,
+            };
+          })
         : fallbackData.heroSlides;
 
       const essenceSection = data.essenceSection
@@ -355,7 +360,12 @@ export async function getProductsData(): Promise<{
         keyApplications: p.keyApplications || [],
         specifications: p.specifications || [],
         isFlagship: Boolean(p.isFlagship),
-        image: urlForImage(p.image) || p.fallbackImageUrl || '',
+        image: (() => {
+          const cmsImg = urlForImage(p.image);
+          if (cmsImg && !cmsImg.includes('unsplash.com')) return cmsImg;
+          if (p.fallbackImageUrl && !p.fallbackImageUrl.includes('unsplash.com')) return p.fallbackImageUrl;
+          return p.category === 'Polymers' ? '/images/cards/card-2.webp' : '/images/cards/card-1.webp';
+        })(),
         grades: p.grades || undefined,
       }));
 

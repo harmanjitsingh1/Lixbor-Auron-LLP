@@ -1,7 +1,32 @@
 import React, { Suspense } from 'react';
+import type { Metadata } from 'next';
 import { ContactForm } from '../../components/sections/ContactForm';
 import { FAQSection } from '../../components/sections/FAQSection';
 import { getContactPageData, getSiteSettings, getFaqData, getProductsData } from '../../lib/sanity/data';
+import { JsonLd } from '../../components/seo/JsonLd';
+
+export const metadata: Metadata = {
+  title: 'Contact & Request a Quote (RFQ) | Commercial Trading Desk',
+  description:
+    'Submit an RFQ quotation request for Magnesium Oxide, fertilizers, industrial chemicals, or polymers. Direct desk contact, corporate credentials, and location details.',
+  keywords: [
+    'request a quote commodities',
+    'RFQ Magnesium Oxide',
+    'buy Urea fertilizer bulk',
+    'import export inquiry India',
+    'Lixbor Auron LLP contact',
+    'Khanna Punjab corporate office',
+  ],
+  alternates: {
+    canonical: '/contact',
+  },
+  openGraph: {
+    title: 'Contact & Request a Quote | Lixbor Auron LLP',
+    description:
+      'Connect with our international commercial trading desk to discuss procurement requirements, custom grades, and global shipping logistics.',
+    url: '/contact',
+  },
+};
 
 export default async function ContactPage() {
   const [contactData, settings, faqs, productsData] = await Promise.all([
@@ -26,8 +51,32 @@ export default async function ContactPage() {
     { label: 'Country', key: 'country', value: companyData.country },
   ];
 
+  const contactPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ContactPage',
+    name: 'Contact & RFQ Inquiries — Lixbor Auron LLP',
+    description:
+      'Direct commercial desk contact and RFQ submission portal for international industrial commodity trade.',
+    mainEntity: {
+      '@type': 'Organization',
+      name: companyData.name,
+      legalName: companyData.legalName,
+      telephone: companyData.placeholders.phone,
+      email: companyData.placeholders.email,
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: companyData.placeholders.registeredOffice,
+        addressLocality: 'Khanna',
+        addressRegion: 'Punjab',
+        addressCountry: 'IN',
+      },
+    },
+  };
+
   return (
     <div className="space-y-0">
+      <JsonLd data={contactPageSchema} />
+
       {/* Hero Banner (Extends to top: 0 behind transparent header) */}
       <section className="relative pt-36 sm:pt-44 pb-24 bg-[#070e17] text-white overflow-hidden border-b border-white/10">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900 via-[#070e17] to-[#070e17] opacity-90" />

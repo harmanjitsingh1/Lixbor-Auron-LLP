@@ -25,7 +25,8 @@ const defaultSlides: Slide[] = [
     buttonText: 'EXPLORE',
     buttonLink: '/products',
     localImage: '/images/hero/hero-1.webp',
-    fallbackImage: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=2000&q=80',
+    fallbackImage: '/images/hero/hero-1.webp',
+    image: '/images/hero/hero-1.webp',
   },
   {
     number: '02',
@@ -36,7 +37,8 @@ const defaultSlides: Slide[] = [
     buttonText: 'EXPLORE PRODUCTS',
     buttonLink: '/products#mgo-focus',
     localImage: '/images/hero/hero-2.webp',
-    fallbackImage: 'https://images.unsplash.com/photo-1616886307848-7f6635699c43?auto=format&fit=crop&w=2000&q=80',
+    fallbackImage: '/images/hero/hero-2.webp',
+    image: '/images/hero/hero-2.webp',
   },
   {
     number: '03',
@@ -47,7 +49,8 @@ const defaultSlides: Slide[] = [
     buttonText: 'WHO WE ARE',
     buttonLink: '/who-we-are',
     localImage: '/images/hero/hero-3.webp',
-    fallbackImage: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=2000&q=80',
+    fallbackImage: '/images/hero/hero-3.webp',
+    image: '/images/hero/hero-3.webp',
   },
 ];
 
@@ -78,10 +81,13 @@ export const VeritaseHero: React.FC<VeritaseHeroProps> = ({ slides: propSlides }
     <section className="relative h-screen min-h-screen w-full overflow-hidden bg-navy-950 text-white flex items-center">
       {/* Background Image Carousel with Vibrant Natural Overlay */}
       {slides.map((s, idx) => {
-        const defaultImg = s.image || s.localImage || s.fallbackImage || '';
-        let imageSrc = defaultImg;
-        if (failedImages[defaultImg] && s.fallbackImage) {
-          imageSrc = s.fallbackImage;
+        const localHeroFile = `/images/hero/hero-${(idx % 3) + 1}.webp`;
+        // Prefer explicit local image or uploaded CMS image (if non-unsplash), otherwise default local file
+        const cmsOrLocal = s.image && !s.image.includes('unsplash.com') ? s.image : undefined;
+        const defaultImg = s.localImage || cmsOrLocal || s.fallbackImage || localHeroFile;
+        let imageSrc = defaultImg.includes('unsplash.com') ? localHeroFile : defaultImg;
+        if (failedImages[imageSrc]) {
+          imageSrc = localHeroFile;
         }
 
         const isActive = idx === currentSlide;
@@ -99,7 +105,10 @@ export const VeritaseHero: React.FC<VeritaseHeroProps> = ({ slides: propSlides }
               key={isActive ? `active-hero-zoom-${currentSlide}` : `inactive-hero-${idx}`}
               src={imageSrc}
               alt={s.headlineTitle}
-              onError={() => handleImageError(defaultImg)}
+              loading={idx === 0 ? 'eager' : 'lazy'}
+              fetchPriority={idx === 0 ? 'high' : 'low'}
+              decoding="async"
+              onError={() => handleImageError(imageSrc)}
               className={`absolute inset-0 h-full w-full object-cover object-center ${
                 isActive ? zoomAnimationClass : (idx % 2 === 0 ? 'scale-100' : 'scale-110')
               }`}

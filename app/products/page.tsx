@@ -1,14 +1,73 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getProductsData } from '../../lib/sanity/data';
+import { JsonLd } from '../../components/seo/JsonLd';
+
+export const metadata: Metadata = {
+  title: 'Our Products | Magnesium Oxide (MgO), Chemicals, Fertilizers & Polymers',
+  description:
+    'Comprehensive industrial raw materials portfolio: Magnesium Oxide (Agricultural, Feed, and Technical grades), Urea, Granular Sulphur, Melamine, XLPE, and polymer resins.',
+  keywords: [
+    'Magnesium Oxide supplier',
+    'MgO grades',
+    'MgO-AGRI Agricultural Grade',
+    'MgO-FEED Animal Feed Grade',
+    'MgO-TECH Technical Grade',
+    'Urea Prilled 46%',
+    'Technical Grade Urea',
+    'Automotive DEF AdBlue Urea',
+    'Granular Sulphur bulk supplier',
+    'Melamine 99.8% supplier',
+    'XLPE compounds',
+    'LDPE resins',
+    'HDPE trading',
+    'ABS polymer',
+    'industrial chemicals India',
+    'fertilizers supplier India',
+  ],
+  alternates: {
+    canonical: '/products',
+  },
+  openGraph: {
+    title: 'Industrial Commodities Catalog | Lixbor Auron LLP',
+    description:
+      'Certified raw materials sourced directly from verified international producers: Magnesium Oxide (MgO), Chemicals, Fertilizers, and Polymers.',
+    url: '/products',
+  },
+};
 
 export default async function ProductsPage() {
   const { products, mgoGrades } = await getProductsData();
   const chemicalsAndFertilizers = products.filter((p) => p.category === 'Chemicals & Fertilizers');
   const polymers = products.filter((p) => p.category === 'Polymers');
 
+  const itemListSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Industrial Commodities & Raw Materials Catalog',
+    description:
+      'High-purity Magnesium Oxide (MgO), industrial chemicals, fertilizers, and engineering polymers sourced and supplied by Lixbor Auron LLP.',
+    itemListElement: [
+      ...mgoGrades.map((grade, idx) => ({
+        '@type': 'ListItem',
+        position: idx + 1,
+        name: `Magnesium Oxide (${grade.code}) - ${grade.name}`,
+        description: grade.description,
+      })),
+      ...products.map((prod, idx) => ({
+        '@type': 'ListItem',
+        position: mgoGrades.length + idx + 1,
+        name: prod.name,
+        description: prod.fullDescription,
+      })),
+    ],
+  };
+
   return (
     <div className="space-y-0">
+      <JsonLd data={itemListSchema} />
+
       {/* 1. Page Hero (Extends to top: 0 behind transparent header) */}
       <section className="relative pt-36 sm:pt-44 pb-24 bg-[#070e17] text-white overflow-hidden border-b border-white/10">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900 via-[#070e17] to-[#070e17] opacity-90" />

@@ -1,4 +1,14 @@
 import React from 'react';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Privacy Notice | Commercial Data Protection',
+  description:
+    'Learn how Lixbor Auron LLP collects, uses, and safeguards commercial inquiry data and business contact information in B2B transactions.',
+  alternates: {
+    canonical: '/privacy-notice',
+  },
+};
 
 export default function PrivacyNoticePage() {
   return (
