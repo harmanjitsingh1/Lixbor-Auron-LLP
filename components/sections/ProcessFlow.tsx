@@ -34,19 +34,19 @@ export const ProcessFlow: React.FC<ProcessFlowProps> = ({
           {model.map((item, idx) => (
             <div
               key={item.step}
-              className="relative group bg-white border border-slate-200 rounded-xl p-5 hover:border-sky-400 hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
+              className="relative group bg-white border border-slate-200 rounded-xl p-5 hover:border-emerald-500 hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl font-extrabold font-mono text-sky-500/40 group-hover:text-sky-500 transition-colors">
+                  <span className="text-2xl font-extrabold font-mono text-emerald-500/40 group-hover:text-emerald-500 transition-colors">
                     0{item.step}
                   </span>
                   {idx < physicalTradingModelData.length - 1 && (
-                    <Icon name="ChevronRight" size={16} className="hidden lg:block text-slate-300 group-hover:text-sky-500" />
+                    <Icon name="ChevronRight" size={16} className="hidden lg:block text-slate-300 group-hover:text-emerald-500" />
                   )}
                 </div>
                 <h4 className="text-lg font-bold text-slate-900">{item.title}</h4>
-                <span className="text-[11px] font-semibold uppercase text-sky-600 tracking-wider block">
+                <span className="text-[11px] font-semibold uppercase text-emerald-600 tracking-wider block">
                   {item.action}
                 </span>
                 <p className="text-xs text-slate-600 font-light leading-relaxed">
@@ -62,7 +62,7 @@ export const ProcessFlow: React.FC<ProcessFlowProps> = ({
       <div className="bg-navy-950 text-white rounded-3xl p-8 sm:p-12 border border-white/10 relative overflow-hidden">
         <div className="relative z-10 space-y-8">
           <div className="max-w-xl space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-400">
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-400">
               5-STEP SOURCING METHODOLOGY
             </span>
             <h3 className="text-2xl sm:text-3xl font-light text-white">
@@ -77,9 +77,9 @@ export const ProcessFlow: React.FC<ProcessFlowProps> = ({
             {steps.map((step) => (
               <div
                 key={step.step}
-                className="bg-navy-900/90 border border-white/10 rounded-xl p-5 backdrop-blur-md space-y-3 hover:border-sky-400/50 transition-colors"
+                className="bg-navy-900/90 border border-white/10 rounded-xl p-5 backdrop-blur-md space-y-3 hover:border-emerald-500/50 transition-colors"
               >
-                <div className="h-8 w-8 rounded-lg bg-sky-500/20 text-sky-400 font-mono font-bold flex items-center justify-center text-sm">
+                <div className="h-8 w-8 rounded-lg bg-emerald-500/20 text-emerald-400 font-mono font-bold flex items-center justify-center text-sm">
                   {step.step}
                 </div>
                 <h4 className="text-base font-bold text-white">{step.title}</h4>
