@@ -143,6 +143,12 @@ export const Footer: React.FC<FooterProps> = ({ company, navLinks, legalLinks })
                 <span className="text-[10px] text-slate-400 uppercase block font-sans">Corporate Office:</span>
                 <span className="text-slate-800 font-sans leading-tight block">{activeCompany.placeholders.registeredOffice}</span>
               </div>
+              {activeCompany.placeholders.gstin && (
+                <div>
+                  <span className="text-[10px] text-slate-400 uppercase block font-sans">GSTIN:</span>
+                  <span className="text-slate-800 font-mono text-[11px] block">{activeCompany.placeholders.gstin}</span>
+                </div>
+              )}
               <div>
                 <span className="text-[10px] text-slate-400 uppercase block font-sans">LLPIN / PAN / TAN:</span>
                 <span className="text-slate-800 font-mono text-[11px] block">{activeCompany.placeholders.llpin} · PAN: {activeCompany.placeholders.pan} · TAN: {activeCompany.placeholders.tan}</span>

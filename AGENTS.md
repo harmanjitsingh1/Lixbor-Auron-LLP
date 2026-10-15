@@ -54,7 +54,7 @@ This document provides essential context, architectural patterns, design standar
 ├── components/
 │   ├── layout/
 │   │   ├── Header.tsx                # Sticky floating pill navbar with natural liquid glass on scroll
-│   │   └── Footer.tsx                # Corporate footer, PAN/LLPIN details, navigation, legal links
+│   │   └── Footer.tsx                # Corporate footer, GSTIN/PAN/LLPIN details, navigation, legal links
 │   ├── sections/
 │   │   ├── VeritaseHero.tsx          # Fullscreen responsive background image carousel
 │   │   ├── VeritaseCards.tsx         # 4-card tall grid highlighting trade value propositions

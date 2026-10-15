@@ -13,7 +13,8 @@ export const companyData: CompanyDetails = {
   placeholders: {
     registeredOffice: 'Shop no. 10, 2nd floor, Khanna City Centre, G.T. Road, Khanna',
     llpin: 'ADB-3045',
-    pan: 'AANFL4750H*',
+    gstin: '03AANFL4750H1ZB',
+    pan: 'AANFL4750H',
     tan: 'JLDL01971E*',
     email: 'contact@lixborauron.com',
     phone: '+91 62391-41145',

@@ -121,6 +121,8 @@ export default async function RootLayout({
     '@id': `${siteUrl}/#organization`,
     name: companyData.name,
     legalName: companyData.legalName,
+    taxID: companyData.placeholders.gstin,
+    vatID: companyData.placeholders.gstin,
     url: siteUrl,
     logo: `${siteUrl}/images/logo/logo-png.png`,
     description:

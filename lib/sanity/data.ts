@@ -116,6 +116,16 @@ export async function getSiteSettings(): Promise<{
           placeholders: {
             ...companyData.placeholders,
             ...(data.placeholders || {}),
+            gstin:
+              data.placeholders?.gstin &&
+              !data.placeholders.gstin.toLowerCase().includes('applied') &&
+              !data.placeholders.gstin.toLowerCase().includes('process')
+                ? data.placeholders.gstin
+                : companyData.placeholders.gstin,
+            pan:
+              data.placeholders?.pan && !data.placeholders.pan.includes('*')
+                ? data.placeholders.pan
+                : companyData.placeholders.pan,
           },
         },
         mainNavLinks: data.mainNavLinks?.length ? data.mainNavLinks : mainNavLinks,

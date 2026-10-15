@@ -43,6 +43,9 @@ export default async function ContactPage() {
   const dynamicCompanyDetailFields = [
     { label: 'Registered Office', key: 'registeredOffice', value: companyData.placeholders.registeredOffice },
     { label: 'LLPIN', key: 'llpin', value: companyData.placeholders.llpin },
+    ...(companyData.placeholders.gstin
+      ? [{ label: 'GSTIN', key: 'gstin', value: companyData.placeholders.gstin }]
+      : []),
     { label: 'PAN', key: 'pan', value: companyData.placeholders.pan },
     { label: 'TAN', key: 'tan', value: companyData.placeholders.tan },
     { label: 'Email', key: 'email', value: companyData.placeholders.email },
@@ -61,6 +64,8 @@ export default async function ContactPage() {
       '@type': 'Organization',
       name: companyData.name,
       legalName: companyData.legalName,
+      taxID: companyData.placeholders.gstin,
+      vatID: companyData.placeholders.gstin,
       telephone: companyData.placeholders.phone,
       email: companyData.placeholders.email,
       address: {

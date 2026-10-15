@@ -18,6 +18,7 @@ import { companyData } from './company';
 export const companyDetailFields = [
   { label: 'Registered Office', key: 'registeredOffice', value: companyData.placeholders.registeredOffice },
   { label: 'LLPIN', key: 'llpin', value: companyData.placeholders.llpin },
+  { label: 'GSTIN', key: 'gstin', value: companyData.placeholders.gstin || '03AANFL4750H1ZB' },
   { label: 'PAN', key: 'pan', value: companyData.placeholders.pan },
   { label: 'TAN', key: 'tan', value: companyData.placeholders.tan },
   { label: 'Email', key: 'email', value: companyData.placeholders.email },
